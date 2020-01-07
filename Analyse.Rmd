@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 #Packages, Libraries und Daten laden:
 ```{r message=FALSE, warning=FALSE}
-#install.packages("haven")
+install.packages("haven")
 library(tidyverse)
 library(haven)
 
@@ -60,6 +60,29 @@ Wie benennt man die NAs in der Spalte zu E um und wie benennt man Spalte zu grou
 
 ##Deskriptive Statistik
 ```{r}
+library(readr)
+survey <- ("survey.sav")
+library(tidyverse)
+library(haven)
+survey <- read_sav("data/survey.sav")
+survey$age <- as.factor(survey$age)
+survey$gender <- as_factor(survey$gender)
+
+table(df$age)
+max(table(df$age))
+mean(table(df$age))
+
+table(df$gender)
+
+table(df$language)
+
+table(df$education)
+
+table(df$job)
+
+table(df$socialmedia)
+
+table(df$utopia)
 
 ```
 
