@@ -128,22 +128,30 @@ $(document).ready(function () {
 </div>
 
 
-<div id="packages-libraries-und-daten-laden" class="section level2">
-<h2>Packages, Libraries und Daten laden:</h2>
+<div id="packages-libraries-und-daten-laden" class="section level1">
+<h1>Packages, Libraries und Daten laden:</h1>
 <pre class="r"><code>#install.packages(&quot;haven&quot;)
+#install.packages(&quot;sjlabelled&quot;)
 library(tidyverse)
 library(haven)
+library(sjlabelled)
 
 path = file.path(&quot;data/survey.sav&quot;)
 dataset = read_sav(path)</code></pre>
 </div>
-<div id="daten-bereinigen" class="section level2">
-<h2>Daten bereinigen</h2>
+<div id="daten-bereinigen" class="section level1">
+<h1>Daten bereinigen</h1>
 <pre class="r"><code>#df %&gt;% filter(Status == 0)
 df1 &lt;- dataset[c(-1:-10),c(-1:-4, -8:-16)]
 df2 &lt;- df1 %&gt;% filter(Finished != &quot;0&quot;)
-df3 &lt;- df2[,c(-1,-3,-4)]
-df &lt;- df3[,c(-20:-26, -35:-42, -48:-52, -130:-136, -145:-152, -158:-162, -171:-178)]</code></pre>
+df3 &lt;- df2[,c(-1,-3,-4)] 
+df4 &lt;- arrange(df3,stimuli1_n_items_1)
+df &lt;- df4[,c(-20:-26, -35:-42, -48:-52, -130:-136, -145:-152, -158:-162, -171:-178)]
+
+df &lt;- df %&gt;% mutate(FL_9_DO_Beitr_geNeutral = replace(FL_9_DO_Beitr_geNeutral, FL_9_DO_Beitr_geNeutral == 1, &quot;N&quot;))
+
+
+#df &lt;- df %&gt;% mutate(FL_9_DO_Beitr_geNeutral = replace(FL_9_DO_Beitr_geNeutral, FL_9_DO_Beitr_geNeutral == &quot;NA&quot;, #&quot;E&quot;))</code></pre>
 </div>
 <div id="wir-haben-drei-gruppen" class="section level1">
 <h1>Wir haben drei Gruppen:</h1>
@@ -153,10 +161,209 @@ df &lt;- df3[,c(-20:-26, -35:-42, -48:-52, -130:-136, -145:-152, -158:-162, -171
 <h1>Variablen:</h1>
 <p>mind1_items1_1 bis mind1_items3_5 (Spalte 13-52) : Persönliche Einstellung 1</p>
 <p><em>Was bedeuten die DO-Variablen?(mindX_itemX_DO_X) df3 mit DO-Variablen, df ohne DO-Variablen</em></p>
-<p>stimuli1_n_items_1 bis stimuli5_n_items_4 (Spalte 53-87): Beiträge Neutral stimuli1_n_socmed_1 bis stimuli5_n_socmed_3: Beiträge Neutral, Social Media Abfrage</p>
-<p>stimuli1_e_items_1 bis stimuli5_e_items_4 (Spalte 88-122): Beiträge Emotional stimuli1_e_socmed_1 bis stimuli5_e_socmed_3: Beiträge Emotional, Social Media Abfrage</p>
-<p>mind2_items1_1 bis mind2_items3_5 (Spalte 123-162) : Persönliche Einstellung 2</p>
-<p>behavior_items_1 bis behavior_items_8 (Spalte 163-178): Verhalten</p>
+<p>Beiträge Neutral (Spalte 53-87): stimuli1_n_items_1 bis stimuli5_n_items_4 Beiträge Neutral (Social Media Abfrage): stimuli1_n_socmed_1 bis stimuli5_n_socmed_3</p>
+<p>Beiträge Emotional (Spalte 88-122): stimuli1_e_items_1 bis stimuli5_e_items_4 Beiträge Emotional (Social Media Abfrage): stimuli1_e_socmed_1 bis stimuli5_e_socmed_3</p>
+<p>Persönliche Einstellung 2 (Spalte 123-162): mind2_items1_1 bis mind2_items3_5</p>
+<p>Verhalten (Spalte 163-178): behavior_items_1 bis behavior_items_8</p>
+</div>
+<div id="fragen" class="section level1">
+<h1>Fragen</h1>
+<p>Wie benennt man die NAs in der Spalte zu E um und wie benennt man Spalte zu group_mind um? Sollten wir auch noch group_socmed und group_utopia hinzufügen? Evtl. Zeile 131 und 133 noch rauslöschen?</p>
+<div id="deskriptive-statistik" class="section level2">
+<h2>Deskriptive Statistik</h2>
+<pre class="r"><code>library(readr)
+#Wozu dient dieser Abschnitt? Daten wurden doch bereits eingelesen
+#survey &lt;- (&quot;survey.sav&quot;)
+#survey &lt;- read_sav(&quot;data/survey.sav&quot;)
+#survey$age &lt;- as.factor(survey$age)
+#survey$gender &lt;- as_factor(survey$gender)
+
+#table(df$age)
+#max(table(df$age))
+#mean(table(df$age))
+
+#table(df$gender)
+
+#table(df$language)
+
+#table(df$education)
+
+#table(df$job)
+
+#table(df$socialmedia)
+
+#table(df$utopia)</code></pre>
+</div>
+<div id="faktorenbestimmung" class="section level2">
+<h2>Faktorenbestimmung</h2>
+<pre class="r"><code>#Keys-Objekt dient dazu, für jede Skala eine Liste von Beschreibungen der Spalten zu haben (positiv oder negativ)
+
+#Zugehöriger Text zu einzelnen Items anzeigen lassen
+#df %&gt;% select(starts_with(&quot;mind1_items&quot;)) %&gt;% get_label()
+
+#Keyliste für Persönliche Einstellung 1 erstellen  
+mind1_key &lt;- list(mind1_items = c(&quot;-mind1_items1_1&quot;, &quot;-mind1_items1_2&quot;, &quot;mind1_items1_3&quot;, &quot;mind1_items1_4&quot;,&quot;mind1_items1_5&quot;,&quot;mind1_items1_6&quot;, &quot;mind1_items1_7&quot;, &quot;mind1_items2_1&quot;, &quot;mind1_items2_2&quot;, &quot;mind1_items2_3&quot;, &quot;mind1_items2_4&quot;, &quot;-mind1_items2_5&quot;, &quot;mind1_items2_6&quot;, &quot;mind1_items2_7&quot;, &quot;mind1_items2_8&quot;, &quot;mind1_items3_1&quot;,&quot;-mind1_items3_2&quot;, &quot;mind1_items3_3&quot;, &quot;mind1_items3_4&quot;,&quot;-mind1_items3_5&quot;))
+
+#Cronbachs-Alpha von 0.87
+psych::scoreItems(mind1_key, df)</code></pre>
+<pre><code>## Call: psych::scoreItems(keys = mind1_key, items = df)
+## 
+## (Unstandardized) Alpha:
+##       mind1_items
+## alpha        0.87
+## 
+## Standard errors of unstandardized Alpha:
+##       mind1_items
+## ASE         0.025
+## 
+## Average item correlation:
+##           mind1_items
+## average.r        0.25
+## 
+## Median item correlation:
+## mind1_items 
+##        0.26 
+## 
+##  Guttman 6* reliability: 
+##          mind1_items
+## Lambda.6        0.91
+## 
+## Signal/Noise based upon av.r : 
+##              mind1_items
+## Signal/Noise         6.6
+## 
+## Scale intercorrelations corrected for attenuation 
+##  raw correlations below the diagonal, alpha on the diagonal 
+##  corrected correlations above the diagonal:
+##             mind1_items
+## mind1_items        0.87
+## 
+##  In order to see the item by scale loadings and frequency counts of the data
+##  print with the short option = FALSE</code></pre>
+<pre class="r"><code>#Keyliste für Persönliche Einstellung 2 erstellen  
+mind2_key &lt;- list(mind2_items = c(&quot;-mind2_items1_1&quot;, &quot;-mind2_items1_2&quot;, &quot;mind2_items1_3&quot;, &quot;mind2_items1_4&quot;,&quot;mind2_items1_5&quot;,&quot;mind2_items1_6&quot;, &quot;mind2_items1_7&quot;, &quot;mind2_items2_1&quot;, &quot;mind2_items2_2&quot;, &quot;mind2_items2_3&quot;, &quot;mind2_items2_4&quot;, &quot;-mind2_items2_5&quot;, &quot;mind2_items2_6&quot;, &quot;mind2_items2_7&quot;, &quot;mind2_items2_8&quot;, &quot;mind2_items3_1&quot;,&quot;-mind2_items3_2&quot;, &quot;mind2_items3_3&quot;, &quot;mind2_items3_4&quot;,&quot;-mind2_items3_5&quot;))
+
+#Zugehöriger Text zu einzelnen Items anzeigen lassen
+#df %&gt;% select(starts_with(&quot;stimuli1_n&quot;)) %&gt;% get_label()
+
+#Müssen wir die Beiträge getrennt oder zusammengefasst betrachten?
+
+#Keyliste für Beiträge Neutral
+stimuliN_key &lt;- list(stimuliN_1 = c(&quot;stimuli1_n_items_1&quot;, &quot;stimuli1_n_items_2&quot;,&quot;stimuli1_n_items_3&quot;,&quot;stimuli1_n_items_4&quot;),
+                     stimuliN_2 = c(&quot;stimuli2_n_items_1&quot;, &quot;stimuli2_n_items_2&quot;,&quot;stimuli2_n_items_3&quot;,&quot;stimuli2_n_items_4&quot;),
+                     stimuliN_3 = c(&quot;stimuli3_n_items_1&quot;, &quot;stimuli3_n_items_2&quot;,&quot;stimuli3_n_items_3&quot;,&quot;stimuli3_n_items_4&quot;),
+                     stimuliN_4 = c(&quot;stimuli4_n_items_1&quot;, &quot;stimuli4_n_items_2&quot;,&quot;stimuli4_n_items_3&quot;,&quot;stimuli4_n_items_4&quot;),
+                     stimuliN_5 = c(&quot;stimuli5_n_items_1&quot;, &quot;stimuli5_n_items_2&quot;,&quot;stimuli5_n_items_3&quot;,&quot;stimuli5_n_items_4&quot;))
+
+test_stimuliN_key &lt;- list(stimuliN_items = c(&quot;stimuli1_n_items_1&quot;, &quot;stimuli1_n_items_2&quot;,&quot;stimuli1_n_items_3&quot;,&quot;stimuli1_n_items_4&quot;,&quot;stimuli2_n_items_1&quot;, &quot;stimuli2_n_items_2&quot;,&quot;stimuli2_n_items_3&quot;,&quot;stimuli2_n_items_4&quot;,&quot;stimuli3_n_items_1&quot;, &quot;stimuli3_n_items_2&quot;,&quot;stimuli3_n_items_3&quot;,&quot;stimuli3_n_items_4&quot;,&quot;stimuli4_n_items_1&quot;, &quot;stimuli4_n_items_2&quot;,&quot;stimuli4_n_items_3&quot;,&quot;stimuli4_n_items_4&quot;,&quot;stimuli5_n_items_1&quot;, &quot;stimuli5_n_items_2&quot;,&quot;stimuli5_n_items_3&quot;,&quot;stimuli5_n_items_4&quot;))
+
+#Cronbachs-Alpha bei test_stimuliN bei 0.96
+psych::scoreItems(test_stimuliN_key, df)</code></pre>
+<pre><code>## Call: psych::scoreItems(keys = test_stimuliN_key, items = df)
+## 
+## (Unstandardized) Alpha:
+##       stimuliN_items
+## alpha           0.96
+## 
+## Standard errors of unstandardized Alpha:
+##       stimuliN_items
+## ASE            0.013
+## 
+## Average item correlation:
+##           stimuliN_items
+## average.r           0.52
+## 
+## Median item correlation:
+## stimuliN_items 
+##           0.45 
+## 
+##  Guttman 6* reliability: 
+##          stimuliN_items
+## Lambda.6           0.99
+## 
+## Signal/Noise based upon av.r : 
+##              stimuliN_items
+## Signal/Noise             21
+## 
+## Scale intercorrelations corrected for attenuation 
+##  raw correlations below the diagonal, alpha on the diagonal 
+##  corrected correlations above the diagonal:
+##                stimuliN_items
+## stimuliN_items           0.96
+## 
+##  In order to see the item by scale loadings and frequency counts of the data
+##  print with the short option = FALSE</code></pre>
+<pre class="r"><code>#Keyliste für Beiträge Emotional
+stimuliE_key &lt;- list(stimuliE_1 = c(&quot;stimuli1_e_items_1&quot;, &quot;stimuli1_e_items_2&quot;,&quot;stimuli1_e_items_3&quot;,&quot;stimuli1_e_items_4&quot;),
+                     stimuliE_2 = c(&quot;stimuli2_e_items_1&quot;, &quot;stimuli2_e_items_2&quot;,&quot;stimuli2_e_items_3&quot;,&quot;stimuli2_e_items_4&quot;),
+                     stimuliE_3 = c(&quot;stimuli3_e_items_1&quot;, &quot;stimuli3_e_items_2&quot;,&quot;stimuli3_e_items_3&quot;,&quot;stimuli3_e_items_4&quot;),
+                     stimuliE_4 = c(&quot;stimuli4_e_items_1&quot;, &quot;stimuli4_e_items_2&quot;,&quot;stimuli4_e_items_3&quot;,&quot;stimuli4_e_items_4&quot;),
+                     stimuliE_5 = c(&quot;stimuli5_e_items_1&quot;, &quot;stimuli5_e_items_2&quot;,&quot;stimuli5_e_items_3&quot;,&quot;stimuli5_e_items_4&quot;))
+
+test_stimuliE_key &lt;- list(stimuliE_1 = c(&quot;stimuli1_e_items_1&quot;, &quot;stimuli1_e_items_2&quot;,&quot;stimuli1_e_items_3&quot;,&quot;stimuli1_e_items_4&quot;,&quot;stimuli2_e_items_1&quot;, &quot;stimuli2_e_items_2&quot;,&quot;stimuli2_e_items_3&quot;,&quot;stimuli2_e_items_4&quot;,&quot;stimuli3_e_items_1&quot;, &quot;stimuli3_e_items_2&quot;,&quot;stimuli3_e_items_3&quot;,&quot;stimuli3_e_items_4&quot;,&quot;stimuli4_e_items_1&quot;, &quot;stimuli4_e_items_2&quot;,&quot;stimuli4_e_items_3&quot;,&quot;stimuli4_e_items_4&quot;,&quot;stimuli5_e_items_1&quot;, &quot;stimuli5_e_items_2&quot;,&quot;stimuli5_e_items_3&quot;,&quot;stimuli5_e_items_4&quot;))
+
+#Cronbachs-Alpha bei test_stimuliE bei 0.96
+psych::scoreItems(test_stimuliE_key, df)</code></pre>
+<pre><code>## Call: psych::scoreItems(keys = test_stimuliE_key, items = df)
+## 
+## (Unstandardized) Alpha:
+##       stimuliE_1
+## alpha       0.96
+## 
+## Standard errors of unstandardized Alpha:
+##       stimuliE_1
+## ASE        0.012
+## 
+## Average item correlation:
+##           stimuliE_1
+## average.r       0.55
+## 
+## Median item correlation:
+## stimuliE_1 
+##       0.55 
+## 
+##  Guttman 6* reliability: 
+##          stimuliE_1
+## Lambda.6       0.99
+## 
+## Signal/Noise based upon av.r : 
+##              stimuliE_1
+## Signal/Noise         25
+## 
+## Scale intercorrelations corrected for attenuation 
+##  raw correlations below the diagonal, alpha on the diagonal 
+##  corrected correlations above the diagonal:
+##            stimuliE_1
+## stimuliE_1       0.96
+## 
+##  In order to see the item by scale loadings and frequency counts of the data
+##  print with the short option = FALSE</code></pre>
+<pre class="r"><code>#Keyliste für Verhalten
+#Zugehöriger Text zu einzelnen Items anzeigen lassen
+df %&gt;% select(starts_with(&quot;behavior&quot;)) %&gt;% get_label()</code></pre>
+<pre><code>##                                                                                                                                        behavior_items_1 
+##                                                                      &quot;Wie sehr stimmen Sie den folgenden Aussagen zu. - Mülltrennung finde ich lästig.&quot; 
+##                                                                                                                                        behavior_items_2 
+##      &quot;Wie sehr stimmen Sie den folgenden Aussagen zu. - Ich fliege mehr als drei Mal im Jahr mit dem Flugzeug (Hin- und Rückflug zählen als ein Flug).&quot; 
+##                                                                                                                                        behavior_items_3 
+##                                                                              &quot;Wie sehr stimmen Sie den folgenden Aussagen zu. - Ich fahre oft Fahrrad.&quot; 
+##                                                                                                                                        behavior_items_4 
+##                                                                  &quot;Wie sehr stimmen Sie den folgenden Aussagen zu. - Ich verzichte bewusst auf Plastik.&quot; 
+##                                                                                                                                        behavior_items_5 
+##                                                              &quot;Wie sehr stimmen Sie den folgenden Aussagen zu. - Ich kaufe meistens regionale Produkte.&quot; 
+##                                                                                                                                        behavior_items_6 
+##                                             &quot;Wie sehr stimmen Sie den folgenden Aussagen zu. - Ich pflege einen vegetarischen oder veganen Lebensstil.&quot; 
+##                                                                                                                                        behavior_items_7 
+##                                                          &quot;Wie sehr stimmen Sie den folgenden Aussagen zu. - Beim Duschen spare ich bewusst Wasser ein.&quot; 
+##                                                                                                                                        behavior_items_8 
+## &quot;Wie sehr stimmen Sie den folgenden Aussagen zu. - Ich integriere energiesparende Verhaltensweisen in meinen Alltag, um der Umwelt etwas Gutes zu tun.&quot;</code></pre>
+<pre class="r"><code>#Keyliste für Social Media Nutzung
+
+#Keyliste für Utopia Nutzung</code></pre>
+</div>
+<div id="hypothesenuberprufung" class="section level2">
+<h2>Hypothesenüberprüfung</h2>
+</div>
 </div>
 
 
