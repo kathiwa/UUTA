@@ -70,23 +70,23 @@ Wie benennt man die NAs in der Spalte zu E um und wie benennt man Spalte zu grou
 
 ##Deskriptive Statistik
 ```{r descriptive statistics, echo=FALSE}
-library(readr)
+#library(readr)
 
-table(df$age)
-max(table(df$age))
-mean(table(df$age))
+#table(df$age)
+#max(table(df$age))
+#mean(table(df$age))
 
-table(df$gender)
+#table(df$gender)
 
-table(df$language)
+#table(df$language)
 
-table(df$education)
+#table(df$education)
 
-table(df$job)
+#table(df$job)
 
-table(df$socialmedia)
+#table(df$socialmedia)
 
-table(df$utopia)
+#table(df$utopia)
 
 
 ```
@@ -141,10 +141,10 @@ test_key_stimuliN <- list(stimuliN_items = c("stimuli1_n_items_1", "stimuli1_n_i
     result_N <- psych::scoreItems(test_key_stimuliN, df)
     
     #Darstellung als Tabelle
-    N_scores <- result_N$scores %>% as.tibble()
+    scores_N <- result_N$scores %>% as.tibble()
 
     #Hinzufügen der Spalten in Dataframe
-    datensatz <- datensatz %>% bind_cols(N_scores)
+    datensatz <- datensatz %>% bind_cols(scores_N)
 
 #Keyliste für Beiträge Emotional
 key_stimuliE <- list(stimuliE_1 = c("stimuli1_e_items_1", "stimuli1_e_items_2","stimuli1_e_items_3","stimuli1_e_items_4"),
@@ -156,7 +156,7 @@ key_stimuliE <- list(stimuliE_1 = c("stimuli1_e_items_1", "stimuli1_e_items_2","
 test_key_stimuliE <- list(stimuliE_items = c("stimuli1_e_items_1", "stimuli1_e_items_2","stimuli1_e_items_3","stimuli1_e_items_4","stimuli2_e_items_1", "stimuli2_e_items_2","stimuli2_e_items_3","stimuli2_e_items_4","stimuli3_e_items_1", "stimuli3_e_items_2","stimuli3_e_items_3","stimuli3_e_items_4","stimuli4_e_items_1", "stimuli4_e_items_2","stimuli4_e_items_3","stimuli4_e_items_4","stimuli5_e_items_1", "stimuli5_e_items_2","stimuli5_e_items_3","stimuli5_e_items_4"))
 
     #Cronbachs-Alpha bei test_stimuliE bei 0.96
-    result_E <- psych::scoreItems(test_stimuliE_key, df, impute ="none")
+    result_E <- psych::scoreItems(test_key_stimuliE, df, impute ="none")
     
     #Darstellung als Tabelle
     scores_E <- result_E$scores %>% as.tibble()
@@ -171,13 +171,13 @@ test_key_stimuliE <- list(stimuliE_items = c("stimuli1_e_items_1", "stimuli1_e_i
 key_behave <- list(behavior_items = c("-behavior_items_1", "-behavior_items_2", "behavior_items_3", "behavior_items_4", "behavior_items_5", "behavior_items_6", "behavior_items_7", "behavior_items_8"))
 
     #Cronbachs-Alpha bei 0.7
-    result_behave <- psych::scoreItems(behave_key, df)
+    result_behave <- psych::scoreItems(key_behave, df)
     
     #Darstellung als Tabelle
     scores_behave <- result_behave$scores %>% as.tibble()
 
     #Hinzufügen der Spalten in Dataframe
-#    datensatz <- datensatz %>% bind_cols(behave_scores)
+#    datensatz <- datensatz %>% bind_cols(scores_behave)
 
 #Keyliste für Social Media Nutzung
 #key_socmed <- list(socmed_1 = c("stimuli1_n_socmed_1","stimuli1_n_socmed_2","stimuli1_n_socmed_3"),
@@ -187,13 +187,13 @@ key_behave <- list(behavior_items = c("-behavior_items_1", "-behavior_items_2", 
 #                   socmed_5 = c("stimuli5_n_socmed_1","stimuli5_n_socmed_2","stimuli5_n_socmed_3"))
 
     #Cronbachs-Alpha
-#    result_socmed <- psych::scoreItems(socmed_key, df)
+#    result_socmed <- psych::scoreItems(key_socmed, df)
     
     #Darstellung als Tabelle
 #    scores_socmed <- result_socmed$scores %>% as.tibble()
 
     #Hinzufügen der Spalten in Dataframe
-#    datensatz <- datensatz %>% bind_cols(socmed_scores)
+#    datensatz <- datensatz %>% bind_cols(scores_socmed)
     
     
 #Dataframe, der nur noch "zusammengefasste" Daten beinhaltet, mit dem man zukünftig weiterarbeiten kann
