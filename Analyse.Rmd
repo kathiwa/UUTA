@@ -14,9 +14,12 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r load data, message=FALSE, warning=FALSE}
 #install.packages("haven")
 #install.packages("sjlabelled")
+knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(haven)
 library(sjlabelled)
+library(knitr)
+options(scipen = 1, digits = 3)
 
 path = file.path("data/survey.sav")
 df = read_sav(path)
@@ -70,6 +73,13 @@ Wie benennt man die NAs in der Spalte zu E um und wie benennt man Spalte zu grou
 
 ##Deskriptive Statistik
 ```{r descriptive statistics, echo=FALSE}
+
+#df <- df %>% select(-) Möchten wir etwas herausfiltern?
+
+psych::describe(df) %>% kable()
+
+df %>% ggplot() + aes(x = age + geom_histogram(bins = 20) + labs(x = "Alter", y = "Häufigkeit", title = "Verteilung des Alters") + factor_wrap(~gender) + theme_bw()
+
 #library(readr)
 
 #table(df$age)
