@@ -19,6 +19,7 @@ library(tidyverse)
 library(haven)
 library(sjlabelled)
 library(knitr)
+install.packages("dplyr")
 options(scipen = 1, digits = 3)
 
 path = file.path("data/survey.sav")
@@ -78,7 +79,11 @@ Wie benennt man die NAs in der Spalte zu E um und wie benennt man Spalte zu grou
 
 psych::describe(df) %>% kable()
 
-df %>% ggplot() + aes(x = age + geom_histogram(bins = 20) + labs(x = "Alter", y = "Häufigkeit", title = "Verteilung des Alters") + factor_wrap(~gender) + theme_bw()
+plot <- df %>% ggplot() + aes(x = age) + geom_histogram(bins = 20) + labs(x = "Alter", y = "Häufigkeit", title = "Verteilung des Alters nach Geschlecht") + 
+  factor_wrap(~gender) + 
+  theme_bw()
+
+ggsave("alters_histogram.pdf")
 
 #library(readr)
 
