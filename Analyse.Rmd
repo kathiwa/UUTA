@@ -242,11 +242,26 @@ corPlot(r)
 
 #Principal-Component-Analysis
 pca(r,nfactors = 1)
+fa(r,nfactors = 1)
 
 #oder genau: pca(faktorenanalyse, covar = F)
 
 #Faktorenbestimmung mit paralleler Analyse
 fa.parallel(r) 
+
+#Very Simple Structure Analysis
+vss(r)
+
+
+fa(r)
+iclust(r)
+omega(r)
+
+#Loadingtabelle:
+res <- pca(r, nfactors = 1, scores = T, covar = F)
+
+res$loadings
+
 
 ```
 
@@ -268,6 +283,11 @@ pca(r2,nfactors = 1)
 
 #Faktorenbestimmung mit paralleler Analyse
 fa.parallel(r2) 
+
+#Very Simple Structure Analysis
+vss(r2)
+
+
 ```
 
 ```{r faktorenanalyse behavior, eval=FALSE, include=FALSE}
@@ -287,6 +307,9 @@ pca(r3,nfactors = 4)
 
 #Faktorenbestimmung mit paralleler Analyse
 fa.parallel(r3) 
+
+#Very Simple Structure Analysis
+vss(r3)
 ```
 
 
