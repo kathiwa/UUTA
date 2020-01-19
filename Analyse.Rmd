@@ -314,6 +314,27 @@ vss(r3)
 
 
 ##Hypothesenüberprüfung
+Die Emotionalisierung durch Überschriften (in Kombination mit Bildern) in Utopia-Artikeln bewirkt einen Nudging-Effekt auf die Rezipienten. 
+emotionalisierung: intervallskaliert
+nudging: intervallskaliert
+→ korrelation oder einfache Regression oder bei Gruppenbildung T-Test
+
+Bei Rezipienten, die einen nachhaltigen Lebensstil pflegen, gibt es öfter einen Nudging-Effekt.
+→ korrelation oder einfach reg
+
+Es besteht eine Korrelation zwischen bestehender Haltung/Meinung eines Rezipienten sowie dem Posten auf Social-Media-Kanäle.
+Allgemeine Frage zum Nutzen von Social Media zur Beschreibung der Daten nutzen
+Zur Überprüfung der Hypothese nur das Posten bei den Stimuli einbeziehn
+→ Korrelation
+
+Ein Nudging-Effekt tritt vermehrt bei tatsächlichen Utopia-Nutzern auf.
+→ independent t-test 
+
+(https://www.methodenberatung.uzh.ch/de/datenanalyse_spss.html)
+2 unabhängige Gruppen/Stichproben, da Emotionalisierung vs Neutral??
+Optional:
+Alter/Geschlecht/Bildung?
+
 ```{r}
 
 ```
