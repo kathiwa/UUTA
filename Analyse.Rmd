@@ -82,8 +82,8 @@ Wie benennt man die NAs in der Spalte zu E um und wie benennt man Spalte zu grou
 
 psych::describe(df) %>% kable()
 
-plot <- df %>% ggplot() + aes(x = age) + geom_histogram(bins = 20) + labs(x = "Alter", y = "Häufigkeit", title = "Verteilung des Alters nach Geschlecht") + 
-  #facet_wrap(~gender) + 
+df %>% ggplot() + aes(x = age) + geom_histogram(bins = 20) + labs(x = "Alter", y = "Häufigkeit", title = "Verteilung des Alters nach Geschlecht") + 
+  facet_wrap(~gender) + 
   theme_bw()
 
 #ggsave("alters_histogram.pdf")
@@ -336,6 +336,13 @@ Optional:
 Alter/Geschlecht/Bildung?
 
 ```{r}
+cor(key_stimuliE, key_mind1, gv$key_mind2)
+cor.test(key_stimuliE, key_mind1, key_mind2)
+scoringItems()
 
+t.test(key_stimuliE)
+### Gibt es eine Beziehung zwischen ...
+
+wilcox.test(df$key_stimuliE, df$used_utopia_1)
 ```
 
