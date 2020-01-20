@@ -338,6 +338,8 @@ Ein Nudging-Effekt tritt vermehrt bei tatsächlichen Utopia-Nutzern auf.
 Optional:
 Alter/Geschlecht/Bildung?
 
+Hallo-Test
+
 ```{r}
 cor(key_stimuliE, key_mind1, gv$key_mind2)
 cor.test(key_stimuliE, key_mind1, key_mind2)
