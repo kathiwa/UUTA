@@ -41,14 +41,17 @@ df <- df %>% mutate(FL_9_DO_Beitr_geNeutral = replace(FL_9_DO_Beitr_geNeutral, F
 
 df <- df %>% mutate(FL_9_DO_Beitr_geEmotional = replace(FL_9_DO_Beitr_geEmotional, FL_9_DO_Beitr_geEmotional == "1", "E"))
 
-#df <- df %>% combine(df$FL_9_DO_Beitr_geNeutral,df$FL_9_DO_Beitr_geEmotional)
-
-#df <- df %>% unite("group_stimuli", FL_9_DO_Beitr_geEmotional:FL_9_DO_Beitr_geNeutral, na.rm = FALSE)
-
 df <- df %>% rename("group.stimuli" = "FL_9_DO_Beitr_geNeutral")
 
-#df <- df %>% mutate(neu = coalesce())
+df <- df %>% mutate(use_utopia_1 = coalesce(use_utopia_1,0))
 
+df <- df %>% mutate(group.stimuli = coalesce(group.stimuli, FL_9_DO_Beitr_geEmotional, ""))
+
+#install.packages("tidyverse")
+
+
+df <- df %>% haven::zap_labels()
+df %>% tidyr::pivot_longer(c("stimuli1_n_items_1", "stimuli2_n_items_1"))
 
 ```
 
