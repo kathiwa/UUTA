@@ -83,7 +83,7 @@ Wie benennt man die NAs in der Spalte zu E um und wie benennt man Spalte zu grou
 psych::describe(df) %>% kable()
 
 plot <- df %>% ggplot() + aes(x = age) + geom_histogram(bins = 20) + labs(x = "Alter", y = "Häufigkeit", title = "Verteilung des Alters nach Geschlecht") + 
-  #factor_wrap(~gender) + 
+  #facet_wrap(~gender) + 
   theme_bw()
 
 #ggsave("alters_histogram.pdf")
