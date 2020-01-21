@@ -12,9 +12,9 @@ knitr::opts_chunk$set(echo = TRUE)
 
 #Packages, Libraries und Daten laden:
 ```{r load data, message=FALSE, warning=FALSE}
-#install.packages("haven")
-#install.packages("sjlabelled")
-#install.packages("dplyr")
+install.packages("haven")
+install.packages("sjlabelled")
+install.packages("dplyr")
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(haven)
@@ -239,6 +239,52 @@ fa.parallel(r3)
 
 #Very Simple Structure Analysis
 vss(r3)
+```
+
+```{r faktorenanalyse n, eval=FALSE, include=FALSE}
+
+faktorenanalyse4 <- df %>%  select(starts_with("n"))
+
+#Korrelationstabelle
+r4 <- lowerCor(faktorenanalyse4)
+
+#Korrelationsmatrix
+corPlot(r4)
+
+#Principal-Component-Analysis
+pca(r4,nfactors = 1)
+
+#oder genau: pca(faktorenanalyse, covar = F)
+
+#Faktorenbestimmung mit paralleler Analyse
+fa.parallel(r4) 
+
+#Very Simple Structure Analysis
+vss(r4)
+
+
+```
+
+```{r faktorenanalyse e, eval=FALSE, include=FALSE}
+
+faktorenanalyse5 <- df %>%  select(starts_with("e"))
+
+#Korrelationstabelle
+r5 <- lowerCor(faktorenanalyse5)
+
+#Korrelationsmatrix
+corPlot(r5)
+
+#Principal-Component-Analysis
+pca(r5,nfactors = 1)
+
+#oder genau: pca(faktorenanalyse, covar = F)
+
+#Faktorenbestimmung mit paralleler Analyse
+fa.parallel(r5) 
+
+#Very Simple Structure Analysis
+vss(r5)
 ```
 
 
