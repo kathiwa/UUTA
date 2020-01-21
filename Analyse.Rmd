@@ -22,6 +22,9 @@ library(sjlabelled)
 library(knitr)
 library(psych)
 options(scipen = 1, digits = 3)
+install.packages("devtools")
+devtools::install_github('achetverikov/apastats',subdir='apastats')
+library(apastats)
 
 path = file.path("data/surveynew.sav")
 df = read_sav(path)
@@ -395,20 +398,24 @@ Aus den 20 Items der Mind1-Skala wurde 1 Dimensionen berechnet. Die Skala hatte 
 
 
 ##Hypothesenüberprüfung
-Die Emotionalisierung durch Überschriften (in Kombination mit Bildern) in Utopia-Artikeln bewirkt einen Nudging-Effekt auf die Rezipienten. 
+H1) Die Emotionalisierung durch Überschriften (in Kombination mit Bildern) in Utopia-Artikeln bewirkt einen Nudging-Effekt auf die Rezipienten. 
 emotionalisierung: intervallskaliert
 nudging: intervallskaliert
 → korrelation oder einfache Regression oder bei Gruppenbildung T-Test
 
-Bei Rezipienten, die einen nachhaltigen Lebensstil pflegen, gibt es öfter einen Nudging-Effekt.
+cor.test(datensatz$key_stimuliE, key_mind1, key_mind2)
+
+
+H2) Bei Rezipienten, die einen nachhaltigen Lebensstil pflegen, gibt es öfter einen Nudging-Effekt.
 → korrelation oder einfach reg
 
-Es besteht eine Korrelation zwischen bestehender Haltung/Meinung eines Rezipienten sowie dem Posten auf Social-Media-Kanäle.
+H3) Es besteht eine Korrelation zwischen bestehender Haltung/Meinung eines Rezipienten sowie dem Posten auf Social-Media-Kanäle.
+
 Allgemeine Frage zum Nutzen von Social Media zur Beschreibung der Daten nutzen
 Zur Überprüfung der Hypothese nur das Posten bei den Stimuli einbeziehn
 → Korrelation
 
-Ein Nudging-Effekt tritt vermehrt bei tatsächlichen Utopia-Nutzern auf.
+H4) Ein Nudging-Effekt tritt vermehrt bei tatsächlichen Utopia-Nutzern auf.
 → independent t-test 
 
 (https://www.methodenberatung.uzh.ch/de/datenanalyse_spss.html)
@@ -416,7 +423,6 @@ Ein Nudging-Effekt tritt vermehrt bei tatsächlichen Utopia-Nutzern auf.
 Optional:
 Alter/Geschlecht/Bildung?
 
-Hallo-Test
 
 ```{r}
 #cor(key_stimuliE, key_mind1, df$key_mind2)
@@ -427,5 +433,3 @@ Hallo-Test
 ### Gibt es eine Beziehung zwischen ...
 # Hyoothese 4
 #wilcox.test(df$key_stimuliE, df$used_utopia_1)
-```
-
