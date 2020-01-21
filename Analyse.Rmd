@@ -387,6 +387,15 @@ key_behave <- list(behavior_items = c("-behavior_items_1", "-behavior_items_2", 
 
 Aus den 20 Items der Mind1-Skala wurde 1 Dimensionen berechnet. Die Skala hatte eine hervorragende Reliabilität (Cronbachs *alpha = 0.87*). [An dieser Stelle  könnte man auch die helper Function einfügen. Diese fügt den Wert von Cronbachs Alpha automatisch ein und ergänzt die entsprechende Einstufung der Reliabilität. --> s. Video 3. Skalen berechnen, ab 23 Min.]
 
+```{r semdiff}
+datensatz <- datensatz %>% haven::zap_labels()
+
+datensatz %>% pivot_longer(cols = starts_with("n"))
+
+```
+### hier läd er alles, wo ein n im Wort drin ist anstelle von den n_items --> n_items funktioniert nicht
+
+
 #bisherigen Datensatz speichern und neu einlesen (gecleant)
 ```{r}
 
