@@ -39,7 +39,15 @@ ggplot(data = datensatz) +
   aes(x = group.stimuli, y = stimuli) +
   geom_boxplot(fill = "#0c4c8a") +
   theme_minimal()
+library(ggplot2)
 
- 
+ggplot(data = datensatz) +
+  aes(x = age) + 
+  geom_histogram(bins = 30, fill = "#0c4c8a") +
+  labs(x = "Alter", y = "Häufigkeit", title = "Studentische Stichprobe", subtitle =  "Histogramm des Alters (30 Bins)") + 
+  theme_grey()
+
+ggsave("histogram_age.jpg")
+
 
 ```
