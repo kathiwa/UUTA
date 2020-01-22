@@ -1,0 +1,45 @@
+---
+title: "Deskriptive Statistik"
+author: "Katharina Wagner"
+date: "22 Januar 2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r datensatz laden}
+
+library(tidyverse)
+library(haven)
+library(sjlabelled)
+library(knitr)
+library(psych)
+
+datensatz <- read.csv("datensatz.csv", sep = ";")
+
+```
+
+
+##Deskriptive Statistik
+```{r descriptive statistics}
+
+psych::describe(datensatz) %>% kable()
+
+datensatz %>% ggplot() + aes(x = age) + geom_histogram(bins = 20) + labs(x = "Alter", y = "Häufigkeit", title = "Verteilung des Alters nach Geschlecht") + 
+  facet_wrap(~gender) + 
+  theme_bw()
+
+#ggsave("alters_histogram.pdf")
+
+library(ggplot2)
+
+ggplot(data = datensatz) +
+  aes(x = group.stimuli, y = stimuli) +
+  geom_boxplot(fill = "#0c4c8a") +
+  theme_minimal()
+
+ 
+
+```

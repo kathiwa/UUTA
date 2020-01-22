@@ -1,7 +1,7 @@
 ---
-title: "Berechnung"
+title: "Test"
 author: "Katharina Wagner"
-date: "9 Dezember 2019"
+date: "22 Januar 2020"
 output: html_document
 ---
 
@@ -9,22 +9,22 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-
 #Packages, Libraries und Daten laden:
 ```{r load data, message=FALSE, warning=FALSE}
-install.packages("haven")
-install.packages("sjlabelled")
-install.packages("dplyr")
-knitr::opts_chunk$set(echo = TRUE)
+#install.packages("haven")
+#install.packages("sjlabelled")
+#install.packages("dplyr")
+#install.packages("questionr")
+
 library(tidyverse)
 library(haven)
 library(sjlabelled)
 library(knitr)
 library(psych)
-options(scipen = 1, digits = 3)
+#options(scipen = 1, digits = 3)
 #install.packages("devtools")
-devtools::install_github('achetverikov/apastats',subdir='apastats')
-library(apastats)
+#devtools::install_github('achetverikov/apastats',subdir='apastats')
+#library(apastats)
 
 path = file.path("data/surveynew.sav")
 df = read_sav(path)
@@ -32,7 +32,6 @@ df = read_sav(path)
 
 #Daten bereinigen
 ```{r datacleaning, message=FALSE, warning=FALSE}
-#df %>% filter(Status == 0)
 df <- df[c(-1:-10),c(-1:-4, -8:-16)]
 df <- df %>% filter(Finished != "0")
 df <- df[,c(-1,-3,-4)] 
@@ -46,46 +45,46 @@ df <- df %>% mutate(FL_9_DO_Beitr_geNeutral = replace(FL_9_DO_Beitr_geNeutral, F
 df <- df %>% mutate(FL_9_DO_Beitr_geEmotional = replace(FL_9_DO_Beitr_geEmotional, FL_9_DO_Beitr_geEmotional == "1", "E"))
 
 df <- df %>% rename("group.stimuli" = "FL_9_DO_Beitr_geNeutral") %>%   
-  rename("n1_item1" = "stimuli1_n_items_1") %>% 
-  rename("n1_item2" = "stimuli1_n_items_2") %>% 
-  rename("n1_item3" = "stimuli1_n_items_3") %>% 
-  rename("n1_item4" = "stimuli1_n_items_4" ) %>% 
-  rename("n2_item1" = "stimuli2_n_items_1") %>% 
-  rename("n2_item2" = "stimuli2_n_items_2") %>% 
-  rename("n2_item3" = "stimuli2_n_items_3") %>% 
-  rename("n2_item4"= "stimuli2_n_items_4") %>% 
-  rename("n3_item1"= "stimuli3_n_items_1") %>% 
-  rename("n3_item2"= "stimuli3_n_items_2") %>% 
-  rename("n3_item3"= "stimuli3_n_items_3") %>% 
-  rename("n3_item4"= "stimuli3_n_items_4") %>% 
-  rename("n4_item1"= "stimuli4_n_items_1") %>% 
-  rename("n4_item2"= "stimuli4_n_items_2") %>% 
-  rename("n4_item3"= "stimuli4_n_items_3") %>% 
-  rename("n4_item4"= "stimuli4_n_items_4") %>% 
-  rename("n5_item1"= "stimuli5_n_items_1" ) %>% 
-  rename("n5_item2"= "stimuli5_n_items_2") %>% 
-  rename("n5_item3"= "stimuli5_n_items_3") %>% 
-  rename("n5_item4"= "stimuli5_n_items_4") %>% 
-  rename("e1_item1"= "stimuli1_e_items_1" ) %>% 
-  rename("e1_item2"= "stimuli1_e_items_2") %>% 
-  rename("e1_item3"= "stimuli1_e_items_3") %>% 
-  rename("e1_item4"= "stimuli1_e_items_4") %>% 
-  rename("e2_item1"= "stimuli2_e_items_1" ) %>% 
-  rename("e2_item2"= "stimuli2_e_items_2" ) %>% 
-  rename("e2_item3"= "stimuli2_e_items_3") %>% 
-  rename("e2_item4"= "stimuli2_e_items_4") %>% 
-  rename("e3_item1"= "stimuli3_e_items_1") %>% 
-  rename("e3_item2"= "stimuli3_e_items_2") %>% 
-  rename("e3_item3"= "stimuli3_e_items_3") %>% 
-  rename("e3_item4"= "stimuli3_e_items_4") %>% 
-  rename("e4_item1"= "stimuli4_e_items_1") %>% 
-  rename("e4_item2"= "stimuli4_e_items_2") %>% 
-  rename("e4_item3"= "stimuli4_e_items_3") %>% 
-  rename("e4_item4"= "stimuli4_e_items_4") %>% 
-  rename("e5_item1"= "stimuli5_e_items_1") %>% 
-  rename("e5_item2"= "stimuli5_e_items_2") %>% 
-  rename("e5_item3"= "stimuli5_e_items_3" ) %>% 
-  rename("e5_item4"= "stimuli5_e_items_4") 
+  rename("n1_1" = "stimuli1_n_items_1") %>% 
+  rename("n2_1" = "stimuli1_n_items_2") %>% 
+  rename("n3_1" = "stimuli1_n_items_3") %>% 
+  rename("n4_1" = "stimuli1_n_items_4" ) %>% 
+  rename("n1_2" = "stimuli2_n_items_1") %>% 
+  rename("n2_2" = "stimuli2_n_items_2") %>% 
+  rename("n3_2" = "stimuli2_n_items_3") %>% 
+  rename("n4_2"= "stimuli2_n_items_4") %>% 
+  rename("n1_3"= "stimuli3_n_items_1") %>% 
+  rename("n2_3"= "stimuli3_n_items_2") %>% 
+  rename("n3_3"= "stimuli3_n_items_3") %>% 
+  rename("n4_3"= "stimuli3_n_items_4") %>% 
+  rename("n1_4"= "stimuli4_n_items_1") %>% 
+  rename("n2_4"= "stimuli4_n_items_2") %>% 
+  rename("n3_4"= "stimuli4_n_items_3") %>% 
+  rename("n4_4"= "stimuli4_n_items_4") %>% 
+  rename("n1_5"= "stimuli5_n_items_1" ) %>% 
+  rename("n2_5"= "stimuli5_n_items_2") %>% 
+  rename("n3_5"= "stimuli5_n_items_3") %>% 
+  rename("n4_5"= "stimuli5_n_items_4") %>% 
+  rename("e1_1"= "stimuli1_e_items_1" ) %>% 
+  rename("e2_1"= "stimuli1_e_items_2") %>% 
+  rename("e3_1"= "stimuli1_e_items_3") %>% 
+  rename("e4_1"= "stimuli1_e_items_4") %>% 
+  rename("e1_2"= "stimuli2_e_items_1" ) %>% 
+  rename("e2_2"= "stimuli2_e_items_2" ) %>% 
+  rename("e3_2"= "stimuli2_e_items_3") %>% 
+  rename("e4_2"= "stimuli2_e_items_4") %>% 
+  rename("e1_3"= "stimuli3_e_items_1") %>% 
+  rename("e2_3"= "stimuli3_e_items_2") %>% 
+  rename("e3_3"= "stimuli3_e_items_3") %>% 
+  rename("e4_3"= "stimuli3_e_items_4") %>% 
+  rename("e1_4"= "stimuli4_e_items_1") %>% 
+  rename("e2_4"= "stimuli4_e_items_2") %>% 
+  rename("e3_4"= "stimuli4_e_items_3") %>% 
+  rename("e4_4"= "stimuli4_e_items_4") %>% 
+  rename("e1_5"= "stimuli5_e_items_1") %>% 
+  rename("e2_5"= "stimuli5_e_items_2") %>% 
+  rename("e3_5"= "stimuli5_e_items_3" ) %>% 
+  rename("e4_5"= "stimuli5_e_items_4") 
 
 
 df <- df %>% mutate(use_utopia_1 = coalesce(use_utopia_1,0))
@@ -125,40 +124,6 @@ Verhalten (Spalte 163-178): behavior_items_1 bis behavior_items_8
 
 #Fragen
 Wie benennt man die NAs in der Spalte zu E um und wie benennt man Spalte zu group_mind um? Sollten wir auch noch group_socmed und group_utopia hinzufügen? Evtl. Zeile 131 und 133 noch rauslöschen?
-
-##Deskriptive Statistik
-```{r descriptive statistics, include=FALSE}
-
-#df <- df %>% select(-) Möchten wir etwas herausfiltern?
-
-psych::describe(df) %>% kable()
-
-df %>% ggplot() + aes(x = age) + geom_histogram(bins = 20) + labs(x = "Alter", y = "Häufigkeit", title = "Verteilung des Alters nach Geschlecht") + 
-  facet_wrap(~gender) + 
-  theme_bw()
-
-#ggsave("alters_histogram.pdf")
-
-#library(readr)
-
-#table(df$age)
-#max(table(df$age))
-#mean(table(df$age))
-
-#table(df$gender)
-
-#table(df$language)
-
-#table(df$education)
-
-#table(df$job)
-
-#table(df$socialmedia)
-
-#table(df$utopia)
-
-
-```
 
 
 ###Faktorenanalyse
@@ -292,7 +257,7 @@ vss(r5)
 
 
 ##Skalen berechnen
-```{r scales, echo=FALSE}
+```{r scales}
 
 #Keys-Objekt dient dazu, für jede Skala eine Liste von Beschreibungen der Spalten zu haben (positiv oder negativ)
 
@@ -321,7 +286,7 @@ key_mind2 <- list(mind2_items = c("-mind2_items1_1", "-mind2_items1_2", "mind2_i
     scores_mind2 <- result_mind2$scores %>% as.tibble()
 
     #Hinzufügen der Spalten in Dataframe
-    datensatz <- datensatz %>% bind_cols(scores_mind2)
+    datensatz <- df %>% bind_cols(scores_mind2)
 
 #Zugehöriger Text zu einzelnen Items anzeigen lassen
 #df %>% select(starts_with("stimuli1_n")) %>% get_label()
@@ -329,40 +294,40 @@ key_mind2 <- list(mind2_items = c("-mind2_items1_1", "-mind2_items1_2", "mind2_i
 #Müssen wir die Beiträge getrennt oder zusammengefasst betrachten?
 
 #Keyliste für Beiträge Neutral
-#key_stimuliN <- list(stimuliN_1 = c(),
-#                     stimuliN_2 = c(),
-#                     stimuliN_3 = c(),
-#                     stimuliN_4 = c(),
-#                     stimuliN_5 = c())
+#key_stimuliN <- list(stimuliN_1 = c("n1_1","n2_1","n3_1","n4_1"),
+#                     stimuliN_2 = c("n1_2","n2_2","n3_2","n4_2"),
+#                     stimuliN_3 = c("n1_3","n2_3","n3_3","n4_3"),
+#                     stimuliN_4 = c("n1_4","n2_4","n3_4","n4_4"),
+#                     stimuliN_5 = c("n1_5","n2_5","n3_5","n4_5"))
 
-#test_key_stimuliN <- list(stimuliN_items = c())
+key_stimuliN <- list(stimuliN_1 = c("n1_1","n2_1","n3_1","n4_1","n1_2","n2_2","n3_2","n4_2","n1_3","n2_3","n3_3","n4_3","n1_4","n2_4","n3_4","n4_4","n1_5","n2_5","n3_5","n4_5"))
 
-    #Cronbachs-Alpha bei test_stimuliN bei 0.96
- #   result_N <- psych::scoreItems(test_key_stimuliN, df)
+    #Cronbachs-Alpha bei test_stimuliN bei 0.95
+    result_N <-  psych::scoreItems(key_stimuliN, df)
     
     #Darstellung als Tabelle
- #   scores_N <- result_N$scores %>% as.tibble()
+   scores_N <- result_N$scores %>% as.tibble()
 
     #Hinzufügen der Spalten in Dataframe
- #   datensatz <- datensatz %>% bind_cols(scores_N)
+    datensatz <- df %>% bind_cols(scores_N)
 
 #Keyliste für Beiträge Emotional
-#key_stimuliE <- list(stimuliE_1 = c(),
-#                     stimuliE_2 = c(),
-#                     stimuliE_3 = c(),
-#                     stimuliE_4 = c(),
-#                     stimuliE_5 = c())
+#key_stimuliE <- list(stimuliE_1 = c("e1_1","e2_1","e3_1","e4_1"),
+#                     stimuliE_2 = c("e1_2","e2_2","e3_2","e4_2"),
+#                     stimuliE_3 = c("e1_3","e2_3","e3_3","e4_3"),
+#                     stimuliE_4 = c("e1_4","e2_4","e3_4","e4_4"),
+#                     stimuliE_5 = c("e1_5","e2_5","e3_5","e4_5"))
 
-#test_key_stimuliE <- list(stimuliE_items = c())
+key_stimuliE <- list(stimuliE_1 = c("e1_1","e2_1","e3_1","e4_1","e1_2","e2_2","e3_2","e4_2","e1_3","e2_3","e3_3","e4_3","e1_4","e2_4","e3_4","e4_4","e1_5","e2_5","e3_5","e4_5"))
 
     #Cronbachs-Alpha bei test_stimuliE bei 0.96
- #   result_E <- psych::scoreItems(test_key_stimuliE, df, impute ="none")
+    result_E <-    psych::scoreItems(key_stimuliE, df, impute ="none")
     
     #Darstellung als Tabelle
-  #  scores_E <- result_E$scores %>% as.tibble()
+    scores_E <- result_E$scores %>% as.tibble()
 
     #Hinzufügen der Spalten in Dataframe
-#    datensatz <- datensatz %>% bind_cols(scores_E)
+    datensatz <- df %>% bind_cols(scores_E)
 
 #Keyliste für Verhalten
 #Zugehöriger Text zu einzelnen Items anzeigen lassen
@@ -377,25 +342,51 @@ key_behave <- list(behavior_items = c("-behavior_items_1", "-behavior_items_2", 
     scores_behave <- result_behave$scores %>% as.tibble()
 
     #Hinzufügen der Spalten in Dataframe
-#    datensatz <- datensatz %>% bind_cols(scores_behave)
+    datensatz <- df %>% bind_cols(scores_behave)
 
 
 #Dataframe, der nur noch "zusammengefasste" Daten beinhaltet, mit dem man zukünftig weiterarbeiten kann
     #datensatz <- datensatz %>% select(-starts_with("mind1_items"))
     
+#datensatz <- datensatz %>% mutate(stimuliN_1 = coalesce(stimuliN_1, stimuliE_1))
+    
   datensatz <- datensatz [,c(-8:-10, -37:-39, -44:-46, -51:-53, -58:-60, -65:-67,-72:-74, -79:-81, -86:-88, -93:-95,-100:-103,-131,-133)]
 
-
+  write.table(datensatz,"datensatz.csv", sep=";")
 ```
 
 Aus den 20 Items der Mind1-Skala wurde 1 Dimensionen berechnet. Die Skala hatte eine hervorragende Reliabilität (Cronbachs *alpha = 0.87*). [An dieser Stelle  könnte man auch die helper Function einfügen. Diese fügt den Wert von Cronbachs Alpha automatisch ein und ergänzt die entsprechende Einstufung der Reliabilität. --> s. Video 3. Skalen berechnen, ab 23 Min.]
 
-```{r semdiff}
+```{r semdiff neutrale Stimuli}
 
+my_dodge = position_dodge(width=0.3)
 
-#datensatz <- datensatz %>% haven::zap_labels()
+#df <- df %>% haven::zap_labels()
+df1 <- df %>% pivot_longer(cols=starts_with("n")) %>% 
+separate(col=name, into = c("name","stimuli"),sep = "_") 
 
-#datensatz %>% pivot_longer(cols = starts_with("n"))
+## Recoding df1$name into df1$name_rec
+df1$name_rec <- fct_recode(df1$name,
+               "langweilig" = "n1",
+               "gleichgueltig" = "n2",
+               "unbeeindruckt" = "n3",
+               "teilnahmslos" = "n4")
+
+labelslinks <- c("ist langweilig","ist mir gleichgültig","lässt mich unbeeindruckt","lässt mich teilnahmslos")
+labelsrechts <- c("ist interessant","berührt mich","regt mich zum Nachdenken an","wühlt mich auf")
+
+df1 %>%
+  ggplot()+
+  aes(x = as.numeric(name_rec), y = value, group = stimuli, color = stimuli)+
+  stat_summary(fun.data = "mean_se", position = my_dodge)+
+  stat_summary(fun.data = "mean_se", geom = "line", position = my_dodge)+
+  scale_y_continuous(limits = c(1,5), breaks = 1:5, name= "Bewertung") +
+  scale_x_continuous(name="Dimension", breaks = 1:4, labels = labelslinks)+
+ #                    sec.axis(sec_axis(~.,
+  #                                     breaks = 1:4,
+   #                                    labels = labelsrechts)))+
+  coord_flip()
+
 
 ```
 ### hier läd er alles, wo ein n im Wort drin ist anstelle von den n_items --> n_items funktioniert nicht
@@ -405,42 +396,3 @@ Aus den 20 Items der Mind1-Skala wurde 1 Dimensionen berechnet. Die Skala hatte 
 ```{r echo=TRUE}
 
 ```
-
-
-
-##Hypothesenüberprüfung
-H1) Die Emotionalisierung durch Überschriften (in Kombination mit Bildern) in Utopia-Artikeln bewirkt einen Nudging-Effekt auf die Rezipienten. 
-emotionalisierung: intervallskaliert
-nudging: intervallskaliert
-→ korrelation oder einfache Regression oder bei Gruppenbildung T-Test
-
-cor.test(datensatz$key_stimuliE, key_mind1, key_mind2)
-
-
-H2) Bei Rezipienten, die einen nachhaltigen Lebensstil pflegen, gibt es öfter einen Nudging-Effekt.
-→ korrelation oder einfach reg
-
-H3) Es besteht eine Korrelation zwischen bestehender Haltung/Meinung eines Rezipienten sowie dem Posten auf Social-Media-Kanäle.
-
-Allgemeine Frage zum Nutzen von Social Media zur Beschreibung der Daten nutzen
-Zur Überprüfung der Hypothese nur das Posten bei den Stimuli einbeziehn
-→ Korrelation
-
-H4) Ein Nudging-Effekt tritt vermehrt bei tatsächlichen Utopia-Nutzern auf.
-→ independent t-test 
-
-(https://www.methodenberatung.uzh.ch/de/datenanalyse_spss.html)
-2 unabhängige Gruppen/Stichproben, da Emotionalisierung vs Neutral??
-Optional:
-Alter/Geschlecht/Bildung?
-
-
-```{r}
-#cor(key_stimuliE, key_mind1, df$key_mind2)
-#cor.test(key_stimuliE, key_mind1, key_mind2)
-#scoringItems()
-
-#t.test(key_stimuliE)
-### Gibt es eine Beziehung zwischen ...
-# Hyoothese 4
-#wilcox.test(df$key_stimuliE, df$used_utopia_1)

@@ -1,0 +1,59 @@
+---
+title: "Hypothesen"
+author: "Katharina Wagner"
+date: "22 Januar 2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r datensatz laden}
+
+library(tidyverse)
+library(haven)
+library(sjlabelled)
+library(knitr)
+library(psych)
+
+datensatz <- read.csv("datensatz.csv", sep = ";")
+```
+
+##Hypothesenüberprüfung
+H1) Die Emotionalisierung durch Überschriften (in Kombination mit Bildern) in Utopia-Artikeln bewirkt einen Nudging-Effekt auf die Rezipienten. 
+emotionalisierung: intervallskaliert
+nudging: intervallskaliert
+→ korrelation oder einfache Regression oder bei Gruppenbildung T-Test
+
+cor.test(datensatz$key_stimuliE, key_mind1, key_mind2)
+
+
+H2) Bei Rezipienten, die einen nachhaltigen Lebensstil pflegen, gibt es öfter einen Nudging-Effekt.
+→ korrelation oder einfach reg
+
+H3) Es besteht eine Korrelation zwischen bestehender Haltung/Meinung eines Rezipienten sowie dem Posten auf Social-Media-Kanäle.
+
+Allgemeine Frage zum Nutzen von Social Media zur Beschreibung der Daten nutzen
+Zur Überprüfung der Hypothese nur das Posten bei den Stimuli einbeziehn
+→ Korrelation
+
+H4) Ein Nudging-Effekt tritt vermehrt bei tatsächlichen Utopia-Nutzern auf.
+→ independent t-test 
+
+(https://www.methodenberatung.uzh.ch/de/datenanalyse_spss.html)
+2 unabhängige Gruppen/Stichproben, da Emotionalisierung vs Neutral??
+Optional:
+Alter/Geschlecht/Bildung?
+
+
+```{r}
+#cor(key_stimuliE, key_mind1, df$key_mind2)
+#cor.test(key_stimuliE, key_mind1, key_mind2)
+#scoringItems()
+
+#t.test(key_stimuliE)
+### Gibt es eine Beziehung zwischen ...
+# Hyoothese 4
+#wilcox.test(df$key_stimuliE, df$used_utopia_1)
