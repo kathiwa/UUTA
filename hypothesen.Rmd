@@ -25,34 +25,29 @@ datensatz <- read.csv("datensatz.csv", sep = ";")
 ```{r}
 ## H1) Die Emotionalisierung durch Überschriften (in Kombination mit Bildern) in Utopia-Artikeln bewirkt einen Nudging-Effekt auf Rezipienten
 
-cor.test(datensatz$group.stimuli, datensatz$mindset1)
-cor.test(datensatz$group.stimui, datensatz$mindset2)
+cor.test(datensatz$stimuli, datensatz$mind1_items)
+cor.test(datensatz$stimuli, datensatz$mind2_items)
 
 
 ```
-
-##Problem: 
-- datensatz „e“ existiert nicht; alle Items mit „e“ eingeben funktioniert auch nicht
-DENKFEHLER?
-- mind1 und mind2 als Variable gibt es nicht; das gleiche wie bei „e“
 
 ```{r}
 ## H2) Bei Rezipienten, die einen nachhaltigen Lebensstil pflegen, gibt es einen Nudging-Effekt.
 
-cor.test(datensatz$behavior_items, datensatz$mindset1, datensatz$mindset2)
+cor.test(datensatz$behavior_items, datensatz$mind1_items)
+cor.test(datensatz$behavior_items, datensatz$mind2_items)
 
 ```
 
-##Problem:
-Funktioniert nicht (mindset1 /mindset2)
 
 ```{r}
 ## H3) Ein Nudging-Effekt tritt vermehrt bei tatsächlichen Utopia-Nutzern auf.
 
-wilcox.test (datensatz$group.stimuli ~datensatz$use_utopia_1)
+cor.test(datensatz$stimuli, datensatz$use_utopia_1)
 
 ```
-
+##Problem
+Eigentlich muss hier ein wilcox.test gemacht werden, funktioniert nicht, weil die Gruppen nicht definiert sind. Aber cor.test funktioniert, falls der überhaupt etwas bringt.
 
 ```{r}
 ## H4) Ein Nudging-Effekt tritt häufiger bei Frauen auf.
@@ -65,6 +60,8 @@ t.test(datensatz$gender ~ datensatz$group.stimuli)
 ```{r}
 ## H5) Es besteht ein Zusammenhang zwischen dem nachhaltigen Verhalten eines Nutzers und der empfundenen Emotionalisierung.
 
-cor.test(datensatz$behavior_items, key_stimuli/scores_E, result_E)
+cor.test(datensatz$behavior_items, datensatz$stimuli)
 
 ##Problem: 🡪 funktioniert alles nicht,welche Variable für��� welche Variable für die empfundene Emtionalisierung?
+
+```
