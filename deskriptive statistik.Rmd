@@ -47,7 +47,7 @@ ggplot(data = datensatz) +
   labs(x = "Alter", y = "Häufigkeit", title = "Studentische Stichprobe", subtitle =  "Histogramm des Alters (30 Bins)") + 
   theme_grey()
 
-ggsave("histogram_age.jpg")
+#ggsave("histogram_age.jpg")
 
 
 ```

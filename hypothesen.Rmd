@@ -23,45 +23,133 @@ datensatz <- read.csv("datensatz.csv", sep = ";")
 
 ##Hypothesenüberprüfung
 ```{r}
+## Unterschiedshypothese
 ## H1) Die Emotionalisierung durch Überschriften (in Kombination mit Bildern) in Utopia-Artikeln bewirkt einen Nudging-Effekt auf Rezipienten
 
-cor.test(datensatz$stimuli, datensatz$mind1_items)
-cor.test(datensatz$stimuli, datensatz$mind2_items)
+#by_stimuli <- datensatz$stimuli %>% filter(group.stimuli)
 
+stimuli_n <- subset(datensatz, group.stimuli == "N")
+stimuli_e <- subset(datensatz, group.stimuli == "E")
+
+t.test(datensatz$mind2_items ~ datensatz$stimuli)
+t.test(datensatz$mind1_items ~ datensatz$stimuli)
+
+
+
+
+boxplot(stimuli_n$mind1_items, stimuli_e$mind1_items, stimuli_n$mind2_items, stimuli_e$mind2_items,
+       
+        col="#0c4c8a",
+        main = "Nudging-Effekt der neutralen und emotionalen Gruppe",
+        ylab = "Likert-Skala [1-5]"
+        )
+mtext(text=c("Persönliche Einstellung 1", "Persönliche Einstellung 2", "neutral", "emotional", "neutral", "emotional"),
+   side = 1, line = c(1,1,2,2,2,2), at = c(1.5,3.5,1,2,3,4))
+
+
+#ggsave("boxplot_nudging.jpg", plot = last_plot(),dpi = 300)
 
 ```
 
 ```{r}
-## H2) Bei Rezipienten, die einen nachhaltigen Lebensstil pflegen, gibt es einen Nudging-Effekt.
+
+## Zusammenhang 
+##H2) Bei Rezipienten, die einen nachhaltigen Lebensstil pflegen, gibt es einen Nudging-Effekt.
 
 cor.test(datensatz$behavior_items, datensatz$mind1_items)
 cor.test(datensatz$behavior_items, datensatz$mind2_items)
 
+jmv::linReg(datensatz, dep=mind2_items, covs=c("behavior_items"),
+            blocks = list(list("behavior_items")),
+            r2Adj=T, stdEst=T, anova=T)
+
+library(ggplot2)
+
+ggplot(data = datensatz) +
+  aes(x = behavior_items, y = mind2_items) +
+  geom_point(color = "#0c4c8a") +
+  theme_gray()+
+  ylim(1, 6) +
+  labs(x = "Nachhaltiges Verhalten", y = "Persönliche Einstellung 2",
+     title = expression(atop("Zusammenhang zwischen nachhaligem Lebensstil", 
+                           paste ("und Persönlicher Einstellung 2"))),
+     subtitle = "Punktdiagramm")
+
+
+#ggsave("cor_hyp2.png", width = 6, height = 4)
 ```
 
 
 ```{r}
+## Unterschied
 ## H3) Ein Nudging-Effekt tritt vermehrt bei tatsächlichen Utopia-Nutzern auf.
 
-cor.test(datensatz$stimuli, datensatz$use_utopia_1)
+#independent t-test
+
+utopia_user <- subset(datensatz, utopia == "1")
+utopia_nuser <- subset(datensatz, utopia == "2")
+
+
+boxplot(utopia_user$mind1_items, utopia_nuser$mind1_items, utopia_user$mind2_items, utopia_nuser$mind2_items,
+       
+        col="#0c4c8a",
+        main = "Nudging-Effekt bei Utopia-Nutzern und Nicht-Nutzern",
+        ylab = "Likert-Skala [1-5]"
+        )
+mtext(text=c("Persönliche Einstellung 1", "Persönliche Einstellung 2", "Utopia-Nutzer", "Nicht-Nutzer", "Utopia-Nutzer", "Nicht-Nutzer"),
+   side = 1, line = c(1,1,2,2,2,2), at = c(1.5,3.5,1,2,3,4))
+
 
 ```
 ##Problem
 Eigentlich muss hier ein wilcox.test gemacht werden, funktioniert nicht, weil die Gruppen nicht definiert sind. Aber cor.test funktioniert, falls der überhaupt etwas bringt.
 
 ```{r}
+
+# Unterschied
 ## H4) Ein Nudging-Effekt tritt häufiger bei Frauen auf.
 
 datensatz %>% filter(gender != 3)
 
 t.test(datensatz$gender ~ datensatz$group.stimuli)
 
+male <- subset(datensatz, gender == "1")
+female <- subset(datensatz, gender == "2")
+
+boxplot(male$mind1_items, female$mind1_items, male$mind2_items, female$mind2_items,
+       
+        col="#0c4c8a",
+        main = "Nudging-Effekt bei Männern und Frauen",
+        ylab = "Likert-Skala [1-5]"
+        )
+mtext(text=c("Persönliche Einstellung 1", "Persönliche Einstellung 2", "Männer", "Frauen", "Männer", "Frauen"),
+   side = 1, line = c(1,1,2,2,2,2), at = c(1.5,3.5,1,2,3,4))
+
 ```
+
+
 ```{r}
+## Zusammenhang
 ## H5) Es besteht ein Zusammenhang zwischen dem nachhaltigen Verhalten eines Nutzers und der empfundenen Emotionalisierung.
 
 cor.test(datensatz$behavior_items, datensatz$stimuli)
 
-##Problem: 🡪 funktioniert alles nicht,welche Variable für��� welche Variable für die empfundene Emtionalisierung?
+
+
+ggplot(data = datensatz) +
+  aes(x = behavior_items, y = stimuli, color = group.stimuli) +
+  geom_point() +
+  theme_grey()+
+  #ylim(1, 6) +
+  labs(x = "Nachhaltiges Verhalten", y = "Stimuli",
+     title = expression(atop("Zusammenhang zwischen nachhaligem Lebensstil", 
+                           paste ("und Art des Stimulis"))),
+     subtitle = "Punktdiagramm",
+     color = "Art des Stimulis",
+     caption = "E = emotionalisierende Stimuli, N = neutrale Stimuli")
+
+ggsave("cor_hyp5.png", width = 6, height = 4)
+
+##Problem: 🡪 funktioniert alles nicht,welche Variable für��� welche Variable für die empfundene Emtionalisierung?
 
 ```
