@@ -22,38 +22,49 @@ datensatz <- read.csv("datensatz.csv", sep = ";")
 ```
 
 ##Hypothesenüberprüfung
-H1) Die Emotionalisierung durch Überschriften (in Kombination mit Bildern) in Utopia-Artikeln bewirkt einen Nudging-Effekt auf die Rezipienten. 
-emotionalisierung: intervallskaliert
-nudging: intervallskaliert
-→ korrelation oder einfache Regression oder bei Gruppenbildung T-Test
+```{r}
+## H1) Die Emotionalisierung durch Überschriften (in Kombination mit Bildern) in Utopia-Artikeln bewirkt einen Nudging-Effekt auf Rezipienten
 
-cor.test(datensatz$key_stimuliE, key_mind1, key_mind2)
+cor.test(datensatz$group.stimuli, datensatz$mindset1)
+cor.test(datensatz$group.stimui, datensatz$mindset2)
 
 
-H2) Bei Rezipienten, die einen nachhaltigen Lebensstil pflegen, gibt es öfter einen Nudging-Effekt.
-→ korrelation oder einfach reg
+```
 
-H3) Es besteht eine Korrelation zwischen bestehender Haltung/Meinung eines Rezipienten sowie dem Posten auf Social-Media-Kanäle.
+##Problem: 
+- datensatz „e“ existiert nicht; alle Items mit „e“ eingeben funktioniert auch nicht
+DENKFEHLER?
+- mind1 und mind2 als Variable gibt es nicht; das gleiche wie bei „e“
 
-Allgemeine Frage zum Nutzen von Social Media zur Beschreibung der Daten nutzen
-Zur Überprüfung der Hypothese nur das Posten bei den Stimuli einbeziehn
-→ Korrelation
+```{r}
+## H2) Bei Rezipienten, die einen nachhaltigen Lebensstil pflegen, gibt es einen Nudging-Effekt.
 
-H4) Ein Nudging-Effekt tritt vermehrt bei tatsächlichen Utopia-Nutzern auf.
-→ independent t-test 
+cor.test(datensatz$behavior_items, datensatz$mindset1, datensatz$mindset2)
 
-(https://www.methodenberatung.uzh.ch/de/datenanalyse_spss.html)
-2 unabhängige Gruppen/Stichproben, da Emotionalisierung vs Neutral??
-Optional:
-Alter/Geschlecht/Bildung?
+```
+
+##Problem:
+Funktioniert nicht (mindset1 /mindset2)
+
+```{r}
+## H3) Ein Nudging-Effekt tritt vermehrt bei tatsächlichen Utopia-Nutzern auf.
+
+wilcox.test (datensatz$group.stimuli ~datensatz$use_utopia_1)
+
+```
 
 
 ```{r}
-#cor(key_stimuliE, key_mind1, df$key_mind2)
-#cor.test(key_stimuliE, key_mind1, key_mind2)
-#scoringItems()
+## H4) Ein Nudging-Effekt tritt häufiger bei Frauen auf.
 
-#t.test(key_stimuliE)
-### Gibt es eine Beziehung zwischen ...
-# Hyoothese 4
-#wilcox.test(df$key_stimuliE, df$used_utopia_1)
+datensatz %>% filter(gender != 3)
+
+t.test(datensatz$gender ~ datensatz$group.stimuli)
+
+```
+```{r}
+## H5) Es besteht ein Zusammenhang zwischen dem nachhaltigen Verhalten eines Nutzers und der empfundenen Emotionalisierung.
+
+cor.test(datensatz$behavior_items, key_stimuli/scores_E, result_E)
+
+##Problem: 🡪 funktioniert alles nicht,welche Variable für��� welche Variable für die empfundene Emtionalisierung?
