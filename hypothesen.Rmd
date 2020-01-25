@@ -26,16 +26,19 @@ datensatz <- read.csv("datensatz.csv", sep = ";")
 ## Unterschiedshypothese
 ## H1) Die Emotionalisierung durch Überschriften (in Kombination mit Bildern) in Utopia-Artikeln bewirkt einen Nudging-Effekt auf Rezipienten
 
-#by_stimuli <- datensatz$stimuli %>% filter(group.stimuli)
+datensatz <- transform(datensatz, stimuli=cut(datensatz$stimuli, breaks=c(-Inf, filter(datensatz$stimuli.group), Inf)))
 
-stimuli_n <- subset(datensatz, group.stimuli == "N")
-stimuli_e <- subset(datensatz, group.stimuli == "E")
+nachhaltig <- datensatz %>% filter(behavior_group == "high")
 
-t.test(datensatz$mind2_items ~ datensatz$stimuli)
+by_n <- datensatz %>% filter(group.stimuli == "N")
+by_e <- datensatz %>% filter(group.stimuli == "E")
+
+t.test(by_n$mind2_items ~ by_n$stimuli, paired = TRUE)
 t.test(datensatz$mind1_items ~ datensatz$stimuli)
 
 
-
+#stimuli_n <- subset(datensatz, group.stimuli == "N")
+#stimuli_e <- subset(datensatz, group.stimuli == "E")
 
 boxplot(stimuli_n$mind1_items, stimuli_e$mind1_items, stimuli_n$mind2_items, stimuli_e$mind2_items,
        
@@ -56,10 +59,14 @@ mtext(text=c("Persönliche Einstellung 1", "Persönliche Einstellung 2", "neutra
 ## Zusammenhang 
 ##H2) Bei Rezipienten, die einen nachhaltigen Lebensstil pflegen, gibt es einen Nudging-Effekt.
 
-cor.test(datensatz$behavior_items, datensatz$mind1_items)
-cor.test(datensatz$behavior_items, datensatz$mind2_items)
+datensatz <- transform(datensatz, behavior_group=cut(datensatz$behavior_items, breaks=c(-Inf, median(datensatz$behavior_items), Inf), labels=c("low", "high")))
 
-jmv::linReg(datensatz, dep=mind2_items, covs=c("behavior_items"),
+nachhaltig <- datensatz %>% filter(behavior_group == "high")
+
+cor.test(nachhaltig$behavior_items, nachhaltig$mind1_items)
+cor.test(nachhaltig$behavior_items, nachhaltig$mind2_items)
+
+jmv::linReg(nachhaltig, dep=mind2_items, covs=c("behavior_items"),
             blocks = list(list("behavior_items")),
             r2Adj=T, stdEst=T, anova=T)
 
@@ -78,7 +85,34 @@ ggplot(data = datensatz) +
 
 #ggsave("cor_hyp2.png", width = 6, height = 4)
 ```
+#Das Verhalten wurde per Mediansplit in eine Gruppe mit hohem nachhaltigen Lebensstil und geringem nachhaltigen Lebensstil eingeteilt. Zur Hypothesenüberprüfung wurde nur die Gruppe mit hohem nachhaltigen Lebensstil betrachtet. Die Berechnung erfolgte mittels Pearson Moment Korrelation.
 
+#Persönliche Einstellung 1:
+Es gibt einen signifikanten Zusammenhang zwischen der Einstellung und dem Verhalten vor den Stimuli (r(57)=.61, p < .001)
+
+data:  nachhaltig$behavior_items and nachhaltig$mind1_items
+t = 5.8678, df = 57, p-value = 2.366e-07
+alternative hypothesis: true correlation is not equal to 0
+95 percent confidence interval:
+ 0.4242491 0.7516272
+sample estimates:
+      cor 
+0.6136616 
+
+#Persönliche Einstellung 2:
+Es gibt einen signifikanten Zusammenhang zwischen der Einstellung und dem Verhalten vor den Stimuli (r(57)=.66, p < .001)
+
+t = 6.5455, df = 57, p-value = 1.812e-08
+alternative hypothesis: true correlation is not equal to 0
+95 percent confidence interval:
+ 0.4794023 0.7802582
+sample estimates:
+      cor 
+0.6550646 
+
+
+#Lineare Regression --> braucht man die hier?
+Die lineare Regression zeigt, dass ein Modell it einem Prädiktor F(1,57)= 42.8, p<.001, adj.r²=419) signifikant wird. Das Modell klärt somit 41.9% mehr Varianz auf, als der Mittelwert alleine. Ob sich jemand nachhaltig Verhält, kann mit folgender Formel berechnet werden: 
 
 ```{r}
 ## Unterschied
