@@ -26,15 +26,12 @@ datensatz <- read.csv("datensatz.csv", sep = ";")
 ## Unterschiedshypothese
 ## H1) Die Emotionalisierung durch Überschriften (in Kombination mit Bildern) in Utopia-Artikeln bewirkt einen Nudging-Effekt auf Rezipienten
 
-datensatz <- transform(datensatz, stimuli=cut(datensatz$stimuli, breaks=c(-Inf, filter(datensatz$stimuli.group), Inf)))
-
-nachhaltig <- datensatz %>% filter(behavior_group == "high")
 
 by_n <- datensatz %>% filter(group.stimuli == "N")
 by_e <- datensatz %>% filter(group.stimuli == "E")
 
-t.test(by_n$mind2_items ~ by_n$stimuli, paired = TRUE)
-t.test(datensatz$mind1_items ~ datensatz$stimuli)
+#t.test(by_n$mind2_items ~ by_n$stimuli, paired = TRUE)
+#t.test(datensatz$mind1_items ~ datensatz$stimuli)
 
 
 #stimuli_n <- subset(datensatz, group.stimuli == "N")
@@ -66,9 +63,9 @@ nachhaltig <- datensatz %>% filter(behavior_group == "high")
 cor.test(nachhaltig$behavior_items, nachhaltig$mind1_items)
 cor.test(nachhaltig$behavior_items, nachhaltig$mind2_items)
 
-jmv::linReg(nachhaltig, dep=mind2_items, covs=c("behavior_items"),
-            blocks = list(list("behavior_items")),
-            r2Adj=T, stdEst=T, anova=T)
+#jmv::linReg(nachhaltig, dep=mind2_items, covs=c("behavior_items"),
+#            blocks = list(list("behavior_items")),
+#            r2Adj=T, stdEst=T, anova=T)
 
 library(ggplot2)
 
@@ -100,7 +97,7 @@ sample estimates:
 0.6136616 
 
 #Persönliche Einstellung 2:
-Es gibt einen signifikanten Zusammenhang zwischen der Einstellung und dem Verhalten vor den Stimuli (r(57)=.66, p < .001)
+Es gibt einen signifikanten Zusammenhang zwischen der Einstellung und dem Verhalten nach den Stimuli (r(57)=.66, p < .001)
 
 t = 6.5455, df = 57, p-value = 1.812e-08
 alternative hypothesis: true correlation is not equal to 0
@@ -112,26 +109,31 @@ sample estimates:
 
 
 #Lineare Regression --> braucht man die hier?
-Die lineare Regression zeigt, dass ein Modell it einem Prädiktor F(1,57)= 42.8, p<.001, adj.r²=419) signifikant wird. Das Modell klärt somit 41.9% mehr Varianz auf, als der Mittelwert alleine. Ob sich jemand nachhaltig Verhält, kann mit folgender Formel berechnet werden: 
+Die lineare Regression zeigt, dass ein Modell mit einem Prädiktor F(1,57)= 42.8, p<.001, adj.r²=419) signifikant wird. Das Modell klärt somit 41.9% mehr Varianz auf, als der Mittelwert alleine. Ob sich jemand nachhaltig Verhält, kann mit folgender Formel berechnet werden: 
 
 ```{r}
 ## Unterschied
 ## H3) Ein Nudging-Effekt tritt vermehrt bei tatsächlichen Utopia-Nutzern auf.
 
 #independent t-test
+#Variable use_utopia_1: 0 und 1 rausfiltern und 2,3,4 einbeziehen. sind aber nur 9 Nutzer
 
 utopia_user <- subset(datensatz, utopia == "1")
 utopia_nuser <- subset(datensatz, utopia == "2")
 
+#utopia_user <- datensatz %>% filter(use_utopia_1 == c("2","3","4","5"))
+#utopia_nuser <- subset(datensatz, utopia == "0","1")
 
 boxplot(utopia_user$mind1_items, utopia_nuser$mind1_items, utopia_user$mind2_items, utopia_nuser$mind2_items,
        
         col="#0c4c8a",
-        main = "Nudging-Effekt bei Utopia-Nutzern und Nicht-Nutzern",
+        main = "Utopia bekannt vs unbekannt",
         ylab = "Likert-Skala [1-5]"
         )
-mtext(text=c("Persönliche Einstellung 1", "Persönliche Einstellung 2", "Utopia-Nutzer", "Nicht-Nutzer", "Utopia-Nutzer", "Nicht-Nutzer"),
+mtext(text=c("Persönliche Einstellung 1", "Persönliche Einstellung 2", "Utopia bekannt", "Utopia unbekannt", "Utopia bekannt", "Utopia unbekannt"),
    side = 1, line = c(1,1,2,2,2,2), at = c(1.5,3.5,1,2,3,4))
+
+
 
 
 ```
@@ -166,8 +168,12 @@ mtext(text=c("Persönliche Einstellung 1", "Persönliche Einstellung 2", "Männe
 ## Zusammenhang
 ## H5) Es besteht ein Zusammenhang zwischen dem nachhaltigen Verhalten eines Nutzers und der empfundenen Emotionalisierung.
 
-cor.test(datensatz$behavior_items, datensatz$stimuli)
 
+datensatz <- transform(datensatz, behavior_group=cut(datensatz$behavior_items, breaks=c(-Inf, median(datensatz$behavior_items), Inf), labels=c("low", "high")))
+
+nachhaltig <- datensatz %>% filter(behavior_group == "high")
+
+cor.test(datensatz$behavior_items, datensatz$stimuli)
 
 
 ggplot(data = datensatz) +
