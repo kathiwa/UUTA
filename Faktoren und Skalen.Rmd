@@ -28,6 +28,8 @@ library(psych)
 
 path = file.path("data/surveynew.sav")
 df = read_sav(path)
+
+options(scipen = 1, digits = 3)
 ```
 
 #Daten bereinigen
@@ -233,7 +235,7 @@ vss(r4)
 
 ```
 
-```{r faktorenanalyse e, eval=FALSE, include=FALSE}
+```{r faktorenanalyse e}
 
 faktorenanalyse5 <- df %>%  select(starts_with("e"))
 
@@ -286,7 +288,7 @@ key_mind2 <- list(mind2_items = c("-mind2_items1_1", "-mind2_items1_2", "mind2_i
     scores_mind2 <- result_mind2$scores %>% as.tibble()
 
     #Hinzufügen der Spalten in Dataframe
-    datensatz <- df %>% bind_cols(scores_mind2)
+    datensatz <- datensatz %>% bind_cols(scores_mind2)
 
 #Zugehöriger Text zu einzelnen Items anzeigen lassen
 #df %>% select(starts_with("stimuli1_n")) %>% get_label()
@@ -309,7 +311,7 @@ key_stimuliN <- list(stimuliN_1 = c("n1_1","n2_1","n3_1","n4_1","n1_2","n2_2","n
    scores_N <- result_N$scores %>% as.tibble()
 
     #Hinzufügen der Spalten in Dataframe
-    datensatz <- df %>% bind_cols(scores_N)
+    datensatz <- datensatz %>% bind_cols(scores_N)
 
 #Keyliste für Beiträge Emotional
 #key_stimuliE <- list(stimuliE_1 = c("e1_1","e2_1","e3_1","e4_1"),
@@ -327,7 +329,7 @@ key_stimuliE <- list(stimuliE_1 = c("e1_1","e2_1","e3_1","e4_1","e1_2","e2_2","e
     scores_E <- result_E$scores %>% as.tibble()
 
     #Hinzufügen der Spalten in Dataframe
-    datensatz <- df %>% bind_cols(scores_E)
+    datensatz <- datensatz %>% bind_cols(scores_E)
 
 #Keyliste für Verhalten
 #Zugehöriger Text zu einzelnen Items anzeigen lassen
@@ -342,7 +344,7 @@ key_behave <- list(behavior_items = c("-behavior_items_1", "-behavior_items_2", 
     scores_behave <- result_behave$scores %>% as.tibble()
 
     #Hinzufügen der Spalten in Dataframe
-    datensatz <- df %>% bind_cols(scores_behave)
+    datensatz <- datensatz %>% bind_cols(scores_behave)
 
 
 #Dataframe, der nur noch "zusammengefasste" Daten beinhaltet, mit dem man zukünftig weiterarbeiten kann
@@ -351,7 +353,9 @@ key_behave <- list(behavior_items = c("-behavior_items_1", "-behavior_items_2", 
 #datensatz <- datensatz %>% mutate(stimuliN_1 = coalesce(stimuliN_1, stimuliE_1))
     
   datensatz <- datensatz [,c(-8:-10, -37:-39, -44:-46, -51:-53, -58:-60, -65:-67,-72:-74, -79:-81, -86:-88, -93:-95,-100:-103,-131,-133)]
-
+  
+  
+#Datensatz speichern, in Excel bearbeitet und in Deskriptive Statistik und Hypothesen neu eingelesen
   write.table(datensatz,"datensatz.csv", sep=";")
 ```
 

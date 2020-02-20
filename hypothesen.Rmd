@@ -13,38 +13,95 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r datensatz laden}
 
 library(tidyverse)
-library(haven)
-library(sjlabelled)
-library(knitr)
-library(psych)
+#library(haven)
+#library(sjlabelled)
+#library(knitr)
+#library(psych) 
+library(lme4)
+library(sjPlot)
 
-datensatz <- read.csv("datensatz.csv", sep = ";")
+#datensatz <- read.csv("datensatz.csv", sep = ";")
+
+#df_final <- datensatz %>% select(Duration__in_seconds_, age, gender, socialmedia, utopia, use_utopia_1, utopia_group, mind1_items, mind2_items, group.stimuli, stimuli, behavior_items)
+
+#Datensatz speichern und neu eingelesen
+#  write.table(df_final,"df_final.csv", sep=";")
+
+  dataframe <- read.csv("df_final.csv", sep = ";")
+options(scipen = 1, digits = 3)
+
 ```
+
+
+```{r}
+#My_df %>% select(age, gender, robot_care_pref, human_care_pref) %>% Pivot_longer(cols = #(robot_care_pref, human_care_pref)) 
+
+analyse <- dataframe %>% mutate(id = 1:n()) %>% 
+  select(id, Duration__in_seconds_, age, gender, socialmedia, utopia, use_utopia_1, utopia_group, mind1_items, mind2_items, group.stimuli, stimuli, behavior_items) %>%
+  pivot_longer(cols = c(mind1_items, mind2_items))
+```
+
+#Anmerkung: Wenn ich die Hypothese mit dem vorgegebenen Test (Mixed Effects Model) überprüfe, dann beziehe ich ja die relevante Variable (den Wert des Stimulis) nicht mit ein. Da ja in diesem Beispiel nur die persönliche Einstellung vor und nach dem Stimuli einbezogen ist. Sie zeigt zwar, dass es einen Unterschied gibt, aber nicht, dass dieser Unterschied auf die Art des Beitrags (emotional oder neutral) zurückzuführen ist.
 
 ##Hypothesenüberprüfung
 ```{r}
 ## Unterschiedshypothese
 ## H1) Die Emotionalisierung durch Überschriften (in Kombination mit Bildern) in Utopia-Artikeln bewirkt einen Nudging-Effekt auf Rezipienten
 
+#Plot zeigt, dass Mindset vor und nach Stimuli ähnlich sind
+analyse %>% ggplot() + aes(x= name, y= value) + geom_jitter()
 
-by_n <- datensatz %>% filter(group.stimuli == "N")
-by_e <- datensatz %>% filter(group.stimuli == "E")
+#model1 <- lm(value ~ name, data = analyse)
+#anova(model1)
+
+#Bericht Anova: Die Präsentation der Beiträge (vorher/nachher) hat keinen signifikanten Einfluss auf das nachhaltige Mindset der Probanden. F(1,256)=0.04, p>.5
+
+#Mixed effects model:
+model1 <- lmer(value ~ name + (1|id),  data = analyse)
+
+#lmer(stimuli ~ group.stimuli + (1|id), data = analyse)
+#Bericht Mixed Effects Model: Die Art der Beiträge (emotional oder neutral) hat einen signifikanten Einfluss auf deren Wahrnehmung.
+
+#Bericht: Wir haben einen Fixed Effekt (lineare Approximation), der sagt, dass der Durchschnittswert des Mindsets bei 4,7 liegt und wenn ein Beitrag präsentiert wurde steigt nachhaltiges Mindset um 0.0154 Punkte.
+
+summary(model2)
+#random effect sieht wie folgt aus: wir haben 129 Personen gehabt. 258 Messwerte.(wir konnten für alle ein Modell erstellen) Für jede einzelne Person unterscheidet sich das Interzept bzw. haben wir eine Streuung von 0.417. Residual sagt, wie viel geht durch die Modellierung von Gesamtmodell verloren. Fixed effects sagen uns wie der Einfluss der einzelnen Variable auf unsere Größe ist, d.h. unsere Formel wäre: unser Mindset liegt bei 4,7 und nach der Präsentation eines Beitrags bei 4,7 + 0.0154. t-Werte liegen bei 81.17 und 0.98. Correlation of Fixed Effects sagt aus, je höher Wert vor der Präsentation eines Beitrags, desto niedriger Wert nach der Präsentation; negativen Zusammenhang für die fixed effects von Mindset nach Präsentation eines Beitrags auf interzept, d.h. stärke des einflusses der präsentierten Beiträge ist negativ proportional (-0.136) zum interzept des jeweiligen Probanden.
+
+tab_model(model1, string.intercept = "(Interzept)", string.pred = "Prädiktoren", string.est = "Koeffizient", title = "Zusammenfassung des Mixed Effects Models", pred.labels = c("Interzept", "Stimuli (neutral)", string.ci= "Konf.Int(95%)", string.p = "P-Wert", p.style = "a"))
+
+#Bericht: Fixed Effect für das Interzept ist signifikant (p<.001), unser Interzept ist nicht null (nachhaltige Einstellung ist nicht 0, sondern 4,7) Veränderung Mindset nach der Präsentation der Beiträge ist 4,7 + 0.02 (Bereich des Konfidenzintervalls). Random Effects sagt uns etwas darüber aus wie stark die einzelnen Probanden von diesem Standardmodell abweichen können. Streuung 0.02. Effektgröße: Marginal Rsqaure: wie groß ist Effekt (0,448 = mittlerer bis starker Effekt). 0% der Varianz wird durch den Unterschied zwischen Mensch und Roboter beschrieben.
+
+
+###Wenn man Mediansplit für stimuli durchführt, um neutralere und emotionalere Wahrnehmung zu trennen:
+
+analyse <- transform(analyse, stimuli_split=cut(analyse$stimuli, breaks=c(-Inf, median(analyse$stimuli), Inf), labels=c("low", "high")))
+
+model_1_2 <- lmer(value ~ stimuli_split + (1|id),  data = analyse)
+summary(model2)
+
+tab_model(model_1_2, string.intercept = "(Interzept)", string.pred = "Prädiktoren", string.est = "Koeffizient", title = "Zusammenfassung des Mixed Effects Models", pred.labels = c("Interzept", "Hohes nachhaltiges Verhalten", string.ci= "Konf.Int(95%)", string.p = "P-Wert", p.style = "a"))
+
+#Bericht: Es gibt einen signifikanten Zusammenhang zwischen der wahrgenommenen Emotionalisierung der Beiträge (niedrig/hoch) und dem nachhaltigen Mindset der Probanden (s. Tabelle).
+
+#Alt ----
+
+#by_n <- datensatz %>% filter(group.stimuli == "N")
+#by_e <- datensatz %>% filter(group.stimuli == "E")
 
 #t.test(by_n$mind2_items ~ by_n$stimuli, paired = TRUE)
 #t.test(datensatz$mind1_items ~ datensatz$stimuli)
 
-
 #stimuli_n <- subset(datensatz, group.stimuli == "N")
 #stimuli_e <- subset(datensatz, group.stimuli == "E")
 
-boxplot(by_n$mind1_items, by_e$mind1_items, by_n$mind2_items, by_e$mind2_items,
-       ylim = c(1, 6),
-        col="#0c4c8a",
-        main = "Nudging-Effekt der neutralen und emotionalen Gruppe",
-        ylab = "Likert-Skala [1-6]"
-        )
-mtext(text=c("Persönliche Einstellung 1", "Persönliche Einstellung 2", "neutral", "emotional", "neutral", "emotional"),
-   side = 1, line = c(1,1,2,2,2,2), at = c(1.5,3.5,1,2,3,4))
+#boxplot(by_n$mind1_items, by_e$mind1_items, by_n$mind2_items, by_e$mind2_items,
+#       ylim = c(1, 6),
+#        col="#0c4c8a",
+#        main = "Nudging-Effekt der neutralen und emotionalen Gruppe",
+#        ylab = "Likert-Skala [1-6]"
+#        )
+#mtext(text=c("Persönliche Einstellung 1", "Persönliche Einstellung 2", "neutral", "emotional", #"neutral", "emotional"),
+#   side = 1, line = c(1,1,2,2,2,2), at = c(1.5,3.5,1,2,3,4))
 
 #describe(by_n$mind1_items)
 #describe(by_n$mind2_items)
@@ -58,19 +115,21 @@ mtext(text=c("Persönliche Einstellung 1", "Persönliche Einstellung 2", "neutra
 ## Zusammenhang 
 ##H2) Bei Rezipienten, die einen nachhaltigen Lebensstil pflegen, gibt es einen Nudging-Effekt.
 
-datensatz <- transform(datensatz, behavior_group=cut(datensatz$behavior_items, breaks=c(-Inf, median(datensatz$behavior_items), Inf), labels=c("low", "high")))
+analyse <- transform(analyse, behavior_group=cut(analyse$behavior_items, breaks=c(-Inf, median(analyse$behavior_items), Inf), labels=c("low", "high")))
 
-nachhaltig <- datensatz %>% filter(behavior_group == "high")
+#Plot zeigt, dass sich die persönliche Einstellung in Abhängigkeit vom eigenen nachhaltigen Verhalten unterscheidet 
+#analyse %>% ggplot() + aes(x= behavior_group, y= value) + geom_jitter()
 
-cor.test(nachhaltig$behavior_items, nachhaltig$mind1_items)
-cor.test(nachhaltig$behavior_items, nachhaltig$mind2_items)
+#Mixed effects model:
+model2 <- lmer(value ~ behavior_group + (1|id),  data = analyse)
+summary(model2)
 
-#jmv::linReg(nachhaltig, dep=mind2_items, covs=c("behavior_items"),
-#            blocks = list(list("behavior_items")),
-#            r2Adj=T, stdEst=T, anova=T)
+tab_model(model2, string.intercept = "(Interzept)", string.pred = "Prädiktoren", string.est = "Koeffizient", title = "Zusammenfassung des Mixed Effects Models", pred.labels = c("Interzept", "Hohes nachhaltiges Verhalten", string.ci= "Konf.Int(95%)", string.p = "P-Wert", p.style = "a"))
 
+#Bericht: Es gibt einen signifikanten Zusammenhang zwischen der Art des nachhaltigen Verhaltens (niedrig/hoch) und dem nachhaltigen Mindset der Probanden (s. Tabelle).
+
+# Visualisierung für Endpräsi ----
 library(ggplot2)
-
 
 ggplot(data = datensatz) +
   aes(x = behavior_items, y = mind1_items) +
@@ -97,30 +156,8 @@ ggplot(data = datensatz) +
 
 #ggsave("cor_hyp2.png", width = 6, height = 4)
 ```
-#Das Verhalten wurde per Mediansplit in eine Gruppe mit hohem nachhaltigen Lebensstil und geringem nachhaltigen Lebensstil eingeteilt. Zur Hypothesenüberprüfung wurde nur die Gruppe mit hohem nachhaltigen Lebensstil betrachtet. Die Berechnung erfolgte mittels Pearson Moment Korrelation.
 
-#Persönliche Einstellung 1:
-Es gibt einen signifikanten Zusammenhang zwischen der Einstellung und dem Verhalten vor den Stimuli (r(57)=.61, p < .001)
-
-data:  nachhaltig$behavior_items and nachhaltig$mind1_items
-t = 5.8678, df = 57, p-value = 2.366e-07
-alternative hypothesis: true correlation is not equal to 0
-95 percent confidence interval:
- 0.4242491 0.7516272
-sample estimates:
-      cor 
-0.6136616 
-
-#Persönliche Einstellung 2:
-Es gibt einen signifikanten Zusammenhang zwischen der Einstellung und dem Verhalten nach den Stimuli (r(57)=.66, p < .001)
-
-t = 6.5455, df = 57, p-value = 1.812e-08
-alternative hypothesis: true correlation is not equal to 0
-95 percent confidence interval:
- 0.4794023 0.7802582
-sample estimates:
-      cor 
-0.6550646 
+#Bericht: Das Verhalten wurde per Mediansplit in eine Gruppe mit hohem nachhaltigen Lebensstil und geringem nachhaltigen Lebensstil eingeteilt. Zur Hypothesenüberprüfung wurde nur die Gruppe mit hohem nachhaltigen Lebensstil betrachtet. Die Berechnung erfolgte mittels Pearson Moment Korrelation.
 
 
 #Lineare Regression --> braucht man die hier?
@@ -130,14 +167,23 @@ Die lineare Regression zeigt, dass ein Modell mit einem Prädiktor F(1,57)= 42.8
 ## Unterschied
 ## H3) Ein Nudging-Effekt tritt vermehrt bei tatsächlichen Utopia-Nutzern auf.
 
-#independent t-test
-#Variable use_utopia_1: 0 und 1 rausfiltern und 2,3,4 einbeziehen. sind aber nur 9 Nutzer
+#Mixed effects model:
+model3 <- lmer(value ~ utopia_group + (1|id),  data = analyse)
+summary(model3)
 
+tab_model(model3, string.intercept = "(Interzept)", string.pred = "Prädiktoren", string.est = "Koeffizient", title = "Zusammenfassung des Mixed Effects Models", pred.labels = c("Interzept", "Hohes nachhaltiges Verhalten", string.ci= "Konf.Int(95%)", string.p = "P-Wert", p.style = "a"))
+
+#Bericht: Es gibt einen signifikanten Zusammenhang zwischen der tatsächlichen Nutzung (niedrig/hoch) und dem nachhaltigen Mindset der Probanden (s. Tabelle).
+
+
+#Alt ----
 utopia_user <- subset(datensatz, utopia == "1")
 utopia_nuser <- subset(datensatz, utopia == "2")
 
 #utopia_user <- datensatz %>% filter(use_utopia_1 == c("2","3","4","5"))
 #utopia_nuser <- subset(datensatz, utopia == "0","1")
+
+#Visualisierung Endpräsi ----
 
 boxplot(utopia_user$mind1_items, utopia_nuser$mind1_items, utopia_user$mind2_items, utopia_nuser$mind2_items,
         ylim = c(1, 6),
@@ -160,6 +206,16 @@ Eigentlich muss hier ein wilcox.test gemacht werden, funktioniert nicht, weil di
 # Unterschied
 ## H4) Ein Nudging-Effekt tritt häufiger bei Frauen auf.
 
+#Mixed effects model:
+model4 <- lmer(value ~ gender + (1|id),  data = analyse)
+summary(model4)
+
+tab_model(model4, string.intercept = "(Interzept)", string.pred = "Prädiktoren", string.est = "Koeffizient", title = "Zusammenfassung des Mixed Effects Models", pred.labels = c("Interzept", "Hohes nachhaltiges Verhalten", string.ci= "Konf.Int(95%)", string.p = "P-Wert", p.style = "a"))
+
+#Bericht: Es gibt einen signifikanten Zusammenhang zwischen dem Geschlecht und dem nachhaltigen Mindset der Probanden (s. Tabelle).
+
+
+#Alt----
 #datensatz %>% filter(gender != 3)
 
 #t.test(datensatz$gender ~ datensatz$mind1_items)
@@ -167,6 +223,8 @@ Eigentlich muss hier ein wilcox.test gemacht werden, funktioniert nicht, weil di
 
 male <- subset(datensatz, gender == "1")
 female <- subset(datensatz, gender == "2")
+
+#Visualisierung Endpräsi ----
 
 boxplot(male$mind1_items, female$mind1_items, male$mind2_items, female$mind2_items,
         ylim = c(1, 6),
@@ -190,13 +248,10 @@ describe(female$mind2_items)
 ## Zusammenhang
 ## H5) Es besteht ein Zusammenhang zwischen dem nachhaltigen Verhalten eines Nutzers und der empfundenen Emotionalisierung.
 
+cor.test(data=analyse,
+         ~stimuli+behavior_items)
 
-#datensatz <- transform(datensatz, emotional_group=cut(datensatz$stimuli, breaks=c(-Inf, median(datensatz$stimuli), Inf), labels=c("low", "high")))
-
-#emotional <- datensatz %>% filter(emotional_group == "high")
-
-cor.test(datensatz$behavior_items, datensatz$stimuli)
-
+# Visualisierung Endpräsi ----
 
 ggplot(data = datensatz) +
   aes(x = behavior_items, y = stimuli) +
