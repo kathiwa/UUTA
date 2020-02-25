@@ -57,17 +57,18 @@ analyse %>% ggplot() + aes(x= name, y= value) + geom_jitter()
 #Bericht Anova: Die Präsentation der Beiträge (vorher/nachher) hat keinen signifikanten Einfluss auf das nachhaltige Mindset der Probanden. F(1,256)=0.04, p>.5
 
 #Mixed effects model:
-model1 <- lmer(value ~ name + (1|id),  data = analyse)
+model1 <- lmer(value ~ name + group.stimuli + (1|id),  data = analyse)
+model12 <- lmer(value ~ name + stimuli + (1|id),  data = analyse)
 
 #lmer(stimuli ~ group.stimuli + (1|id), data = analyse)
 #Bericht Mixed Effects Model: Die Art der Beiträge (emotional oder neutral) hat einen signifikanten Einfluss auf deren Wahrnehmung.
 
 #Bericht: Wir haben einen Fixed Effekt (lineare Approximation), der sagt, dass der Durchschnittswert des Mindsets bei 4,7 liegt und wenn ein Beitrag präsentiert wurde steigt nachhaltiges Mindset um 0.0154 Punkte.
 
-summary(model2)
+summary(model1)
 #random effect sieht wie folgt aus: wir haben 129 Personen gehabt. 258 Messwerte.(wir konnten für alle ein Modell erstellen) Für jede einzelne Person unterscheidet sich das Interzept bzw. haben wir eine Streuung von 0.417. Residual sagt, wie viel geht durch die Modellierung von Gesamtmodell verloren. Fixed effects sagen uns wie der Einfluss der einzelnen Variable auf unsere Größe ist, d.h. unsere Formel wäre: unser Mindset liegt bei 4,7 und nach der Präsentation eines Beitrags bei 4,7 + 0.0154. t-Werte liegen bei 81.17 und 0.98. Correlation of Fixed Effects sagt aus, je höher Wert vor der Präsentation eines Beitrags, desto niedriger Wert nach der Präsentation; negativen Zusammenhang für die fixed effects von Mindset nach Präsentation eines Beitrags auf interzept, d.h. stärke des einflusses der präsentierten Beiträge ist negativ proportional (-0.136) zum interzept des jeweiligen Probanden.
 
-tab_model(model1, string.intercept = "(Interzept)", string.pred = "Prädiktoren", string.est = "Koeffizient", title = "Zusammenfassung des Mixed Effects Models", pred.labels = c("Interzept", "Stimuli (neutral)", string.ci= "Konf.Int(95%)", string.p = "P-Wert", p.style = "a"))
+tab_model(model12, string.intercept = "(Interzept)", string.pred = "Prädiktoren", string.est = "Koeffizient", title = "Zusammenfassung des Mixed Effects Models", pred.labels = c("Interzept", "Stimuli (neutral)", string.ci= "Konf.Int(95%)", string.p = "P-Wert", p.style = "a"))
 
 #Bericht: Fixed Effect für das Interzept ist signifikant (p<.001), unser Interzept ist nicht null (nachhaltige Einstellung ist nicht 0, sondern 4,7) Veränderung Mindset nach der Präsentation der Beiträge ist 4,7 + 0.02 (Bereich des Konfidenzintervalls). Random Effects sagt uns etwas darüber aus wie stark die einzelnen Probanden von diesem Standardmodell abweichen können. Streuung 0.02. Effektgröße: Marginal Rsqaure: wie groß ist Effekt (0,448 = mittlerer bis starker Effekt). 0% der Varianz wird durch den Unterschied zwischen Mensch und Roboter beschrieben.
 
@@ -115,16 +116,22 @@ tab_model(model_1_2, string.intercept = "(Interzept)", string.pred = "Prädiktor
 ## Zusammenhang 
 ##H2) Bei Rezipienten, die einen nachhaltigen Lebensstil pflegen, gibt es einen Nudging-Effekt.
 
-analyse <- transform(analyse, behavior_group=cut(analyse$behavior_items, breaks=c(-Inf, median(analyse$behavior_items), Inf), labels=c("low", "high")))
+analyse <- transform(analyse, behavior_group=cut(analyse$behavior_items, breaks=c(-Inf, 3.5, Inf), labels=c("low", "high")))
+
+#Gruppeneinteilung ab 3,5 oder behaiour_items --> beides rechnen: Je nachhaltiger, desto..
 
 #Plot zeigt, dass sich die persönliche Einstellung in Abhängigkeit vom eigenen nachhaltigen Verhalten unterscheidet 
 #analyse %>% ggplot() + aes(x= behavior_group, y= value) + geom_jitter()
 
 #Mixed effects model:
-model2 <- lmer(value ~ behavior_group + (1|id),  data = analyse)
+model2 <- lmer(value ~ name + behavior_group + (1|id),  data = analyse)
 summary(model2)
 
-tab_model(model2, string.intercept = "(Interzept)", string.pred = "Prädiktoren", string.est = "Koeffizient", title = "Zusammenfassung des Mixed Effects Models", pred.labels = c("Interzept", "Hohes nachhaltiges Verhalten", string.ci= "Konf.Int(95%)", string.p = "P-Wert", p.style = "a"))
+model21 <- lmer(value ~ name + behavior_items + (1|id),  data = analyse)
+summary(model2)
+
+
+tab_model(model21, string.intercept = "(Interzept)", string.pred = "Prädiktoren", string.est = "Koeffizient", title = "Zusammenfassung des Mixed Effects Models", pred.labels = c("Interzept", "Hohes nachhaltiges Verhalten", string.ci= "Konf.Int(95%)", string.p = "P-Wert", p.style = "a"))
 
 #Bericht: Es gibt einen signifikanten Zusammenhang zwischen der Art des nachhaltigen Verhaltens (niedrig/hoch) und dem nachhaltigen Mindset der Probanden (s. Tabelle).
 
@@ -167,8 +174,10 @@ Die lineare Regression zeigt, dass ein Modell mit einem Prädiktor F(1,57)= 42.8
 ## Unterschied
 ## H3) Ein Nudging-Effekt tritt vermehrt bei tatsächlichen Utopia-Nutzern auf.
 
+
+
 #Mixed effects model:
-model3 <- lmer(value ~ utopia_group + (1|id),  data = analyse)
+model3 <- lmer(value ~ name + utopia_group + (1|id),  data = analyse)
 summary(model3)
 
 tab_model(model3, string.intercept = "(Interzept)", string.pred = "Prädiktoren", string.est = "Koeffizient", title = "Zusammenfassung des Mixed Effects Models", pred.labels = c("Interzept", "Hohes nachhaltiges Verhalten", string.ci= "Konf.Int(95%)", string.p = "P-Wert", p.style = "a"))
